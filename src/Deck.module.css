@@ -1,0 +1,23 @@
+.Container{
+    grid-row-start: 2;
+    grid-column-start: 3;
+
+    width: auto;
+    height: 100%;
+    
+    background-color: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding-left: 5%;
+    padding-right: 5%;
+
+    overflow-y: scroll;
+}
+
+/* This replaces justify-content: flex-end which doesn't allow scrollbar to work */
+.Container > :first-child{
+    margin-top: auto 5%;
+}

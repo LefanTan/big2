@@ -1,23 +1,16 @@
 import styles from './App.module.css';
+import Deck from './Deck';
+import Player from './Player.js'
 
 function App() {
   return (
     <div className={styles.Container}>
-      <div className={styles.Player1}>
-        <p>Player1</p>
-      </div>
-      <div className={styles.Player2}>
-        <p>Player2</p>
-      </div>
-      <div className={styles.Player3}>
-        <p>Player3</p>
-      </div>
-      <div className={styles.Player4}>
-        <p>Player4</p>
-      </div>
-      <div className={styles.Deck}>
-        <p>Deck</p>
-      </div>
+      {/* Turn this into a component with ability to change rotation, orientation */}
+      <Player playerNo='1'>Player1</Player>
+      <Player playerNo='2'>Player2</Player>
+      <Player playerNo='3'>Player3</Player>
+      <Player playerNo='4'>Player4</Player>
+      <Deck/>
     </div>
   );
 }
