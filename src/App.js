@@ -1,16 +1,18 @@
 import styles from './App.module.css';
-import Deck from './Deck';
-import Player from './Player.js'
+import GamePage from './components/GamePage';
+import LobbyPage from './components/LobbyPage'
+import {Switch, Route, HashRouter} from 'react-router-dom'
 
 function App() {
   return (
     <div className={styles.Container}>
-      {/* Turn this into a component with ability to change rotation, orientation */}
-      <Player playerNo='1'>Player1</Player>
-      <Player playerNo='2'>Player2</Player>
-      <Player playerNo='3'>Player3</Player>
-      <Player playerNo='4'>Player4</Player>
-      <Deck/>
+      <HashRouter basename={process.env.REACT_APP_PUBLIC_URL}>
+        <Switch>
+          <Route path='/' exact component={LobbyPage} />
+          <Route path={process.env.REACT_APP_LOBBYPAGE_URL} component={LobbyPage} />
+          <Route path={process.env.REACT_APP_GAMEPAGE_URL} component={GamePage}/>
+        </Switch>
+      </HashRouter>
     </div>
   );
 }

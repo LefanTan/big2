@@ -44,16 +44,19 @@ export default function Player(props){
         alignItems:  'center'
     }
 
-    const inputOnKeyDownHandler = (e) => {
-        if(e.key === 'Enter'){
-            console.log(text)
-        }
+    const submitHandler = (e) => {
+        console.log(text)
+        setText('')
     }
 
     return(
         <div style={playerContainer}>
             <p>{props.children}</p>
-            {props.playerNo === '1' && <input type="text" value={text} onChange={(e) => setText(e.target.value)} onKeyDown={inputOnKeyDownHandler}></input> }
+            {props.playerNo === '1' &&
+                <form onSubmit={submitHandler}>
+                    <input type="text" value={text} onChange={(e) => setText(e.target.value)}/>
+                </form>
+            }
         </div>
     );
 }

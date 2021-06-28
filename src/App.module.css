@@ -1,12 +1,5 @@
 .Container{
-  background-color:cornflowerblue;
+  background-color:royalblue;
   width: 100vw;
   height: 100vh;
-
-  display: grid;
-  grid-template-rows: 25% 50% 25%;
-  grid-template-columns: 20% 5% 50% 5% 20%;
-
-  justify-content: center;
-  align-items: center;
 }
