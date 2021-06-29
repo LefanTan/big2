@@ -9,14 +9,15 @@
 //   // Your web app's Firebase configuration
 //   // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 //   var firebaseConfig = {
-//     apiKey: "AIzaSyA__laCqzqZe3MmI3_TC_F1ywdMvo4vprg",
-//     authDomain: "big2-4e418.firebaseapp.com",
-//     projectId: "big2-4e418",
-//     storageBucket: "big2-4e418.appspot.com",
-//     messagingSenderId: "1014909594305",
-//     appId: "1:1014909594305:web:b10ee15f534c95eb6f8240",
-//     measurementId: "G-PMYKH1SK0L"
-//   };
+  //   apiKey: "AIzaSyA__laCqzqZe3MmI3_TC_F1ywdMvo4vprg",
+  //   authDomain: "big2-4e418.firebaseapp.com",
+  //   databaseURL: "https://big2-4e418-default-rtdb.firebaseio.com",
+  //   projectId: "big2-4e418",
+  //   storageBucket: "big2-4e418.appspot.com",
+  //   messagingSenderId: "1014909594305",
+  //   appId: "1:1014909594305:web:b10ee15f534c95eb6f8240",
+  //   measurementId: "G-PMYKH1SK0L"
+  // };
 //   // Initialize Firebase
 //   firebase.initializeApp(firebaseConfig);
 //   firebase.analytics();
@@ -25,10 +26,12 @@
 import firebase from 'firebase';
 
 const config = {
-    apiKey: "AIzaSyA__laCqzqZe3MmI3_TC_F1ywdMvo4vprg",
-    authDomain: "big2-4e418.firebaseapp.com",
-    databaseURL: "https://big2-4e418.firebaseio.app"
-  };
+  apiKey: "AIzaSyA__laCqzqZe3MmI3_TC_F1ywdMvo4vprg",
+  authDomain: "big2-4e418.firebaseapp.com",
+  databaseURL: "https://big2-4e418-default-rtdb.firebaseio.com"
+};
+
 firebase.initializeApp(config); 
+
 export const auth = firebase.auth;
 export const db = firebase.database();
