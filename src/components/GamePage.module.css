@@ -1,5 +1,6 @@
+@import '../index.css';
+
 .Container{
-    background-color:cornflowerblue;
     width: 100%;
     height: 100%;
   
@@ -9,4 +10,94 @@
   
     justify-content: center;
     align-items: center;
+  }
+
+  .loadingContainer{
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .userCorner{
+    grid-row-start: 1;
+    grid-column-start: 1;
+
+    width: 100%;
+    height: 100%;
+    padding: 0;
+
+    display: flex;
+  }
+
+  .exitButton{
+    background-color: inherit;
+    border: 0;
+
+    transform: rotate(180deg);
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    position: relative;
+    margin: 1px;
+  }
+
+  .exitButton:hover .exitTooltip {
+    visibility: visible;
+    opacity: 1;
+
+    transition: opacity 0.3s;
+  }
+
+  .exitButton .exitTooltip{
+    visibility: hidden;
+    opacity: 0;
+
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-style: normal;
+    transform: rotate(180deg);
+
+    margin: 0;
+    padding: 5px;
+
+    position: absolute;
+    bottom: 35px;
+    right: 5px;
+
+    background-color: var(--main-color);
+    color: var(--secondary-color);
+
+    border-radius: 5px;
+  }
+
+  .exitIcon{
+    width: inherit;
+    height: inherit;
+    color: var(--main-color);
+  }
+
+  .exitIcon:hover{
+    color: var(--main-color-hover);
+    transform: translateY(-1px);
+  }
+
+  .p{
+    composes: generalText from '../index.css';
+
+    line-height: 40px;
+    text-align: center;
+    font-size: medium;
+    margin-top: 2px;
+  }
+
+  .h1{
+    composes: generalText from '../index.css';
+    font-size: xx-large;
   }

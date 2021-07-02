@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import {useHistory} from 'react-router-dom'
 import {db} from '../services/Firebase'
 import styles from './LobbyPage.module.css'
 
 export default function LobbyPage(){
+    const history = useHistory()
     var [lobbyCode, setLobbyCode] = useState('')
     var [playerName, setPlayerName] = useState('')
 
@@ -65,6 +67,8 @@ export default function LobbyPage(){
             id: lobbyCode,
             players: [playerName, 'Tian']
         })
+        // Redirect to Game Page
+        history.push(process.env.REACT_APP_GAMEPAGE_URL + `/${lobbyCode}`)
     }
 
     return(
@@ -75,7 +79,6 @@ export default function LobbyPage(){
                 <button type="submit">Enter</button>
                 <button onClick={lobbyCreateHandler}>Create Room</button>
             </form>
-        
             <p>PLAYER NAME</p>
             <input value={playerName} onChange={(e) => setPlayerName(e.target.value)} type="text"/>
         </div>
