@@ -10,7 +10,7 @@ export default function LobbyPage(){
 
     const roomReadRef = db.ref().child(`Lobbies`)
 
-    /* Check if player name field is filled, if not, show an alert and return false */
+    // Check if player name field is filled, if not, show an alert and return false
     const playerNameFilled = () => {
         if(playerName.length === 0){
             alert('Please enter a name')
@@ -19,14 +19,20 @@ export default function LobbyPage(){
         return true
     }
 
+    // Handles when use click Enter to enter a lobby
     const lobbyEnterHandler = () => {
-        if(!playerNameFilled())
+        if(!playerNameFilled() || lobbyCode === '')
             return
 
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
         query.once('value', snap => {
             if(snap.exists()){
                 let playerList = snap.val()[lobbyCode]['players']
+
+                if(playerList.length >= 4){
+                    return
+                }
+
                 playerList.push(playerName)
 
                 const lobbyReadRef = roomReadRef.child(`${lobbyCode}`)
@@ -43,7 +49,7 @@ export default function LobbyPage(){
         setLobbyCode('')
     }
 
-    /* Random Code Generator: Generate 4 letter combination, each letter is random from 0-9, A-Z.  */
+    // Random Code Generator: Generate 4 letter combination, each letter is random from 0-9, A-Z.
     const randomAlphaNumericGenerator = () => {
         // Generate a number from 0 - 35 
         // If number is 0 - 9, convert directly to char
@@ -54,6 +60,7 @@ export default function LobbyPage(){
         else return String.fromCharCode(55 + randomNo)
     }
 
+    // Handles when the user click "Create" button to create a new room
     const lobbyCreateHandler = (e) => {
         e.preventDefault()
 
@@ -86,7 +93,7 @@ export default function LobbyPage(){
     return(
         <div className={styles.Container}>
             <p>LOBBY CODE</p>
-            <form onSubmit={() => lobbyEnterHandler()}>
+            <form onSubmit={lobbyEnterHandler}>
                 <input value={lobbyCode} onChange={(e) => setLobbyCode(e.target.value.toUpperCase())} type="text"/>
                 <button type="submit">Enter</button>
                 <button onClick={lobbyCreateHandler}>Create Room</button>

@@ -3,7 +3,7 @@ import Deck from './Deck.js';
 import Player from './Player.js'
 import styles from './GamePage.module.css'
 import {db} from '../services/Firebase'
-import { useLocation } from 'react-router';
+import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
 import ErrorPage from './ErrorPage.js';
@@ -11,6 +11,7 @@ import ErrorPage from './ErrorPage.js';
 export default function GamePage(){
     const roomReadRef = db.ref().child(`Lobbies`)
     const location = useLocation()
+    const history = useHistory()
 
     const [lobbyExist, setLobbyExist] = useState(false);
     const [loading, setLoading] = useState(true)
@@ -29,19 +30,39 @@ export default function GamePage(){
         if(lobbyExist){
             const playerListQuery = roomReadRef.child(lobbyCode)
             playerListQuery.on('value', snap => {
-                setPlayerList(snap.val()['players'])
+                if(snap.exists()) setPlayerList(snap.val()['players'])
             })  
         }
     }, [lobbyExist])
 
     useEffect(() => {
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
-        query.on('value', snap => {
+        query.once('value', snap => {
             setLobbyExist(snap.exists())
             setLoading(false)
         })
     }, [lobbyCode])
     
+    // Handles when local player exit the game lobby
+    // If last person to exit, delete the lobby
+    const exitHandler = () => {
+        const query = roomReadRef.orderByKey().equalTo(lobbyCode)
+        query.once('value', snap => {
+            let newPlayerList = (snap.val()[lobbyCode]['players']).filter(x => x !== localPlayerName)
+            
+            // set new list that doesn't contain the local player
+            const lobbyReadRef = roomReadRef.child(lobbyCode)
+            lobbyReadRef.set({
+                players: newPlayerList
+            })
+
+            if(newPlayerList.length === 0)
+                lobbyReadRef.remove()
+        })
+
+        history.push(process.env.REACT_APP_LOBBYPAGE_URL)
+    }
+
     if(loading){
         return (
             <div className={styles.loadingContainer}>
@@ -53,15 +74,13 @@ export default function GamePage(){
             lobbyExist ?
             <div className={styles.Container}>
                 <div className={styles.userCorner}>
-                    <button className={styles.exitButton} data-text="Exit">
-                        {/* TODO: Exit lobby, if lobby empty, delete it */}
+                    <button className={styles.exitButton} onClick={() => exitHandler()}>
                         <IoExitOutline className={styles.exitIcon}/>
                         <p className={styles.exitTooltip}>Exit</p>
                     </button>
                     <p className={styles.p}>CODE: {lobbyCode}</p>
                 </div>
 
-                {/* TODO: Show current player in lobby */}
                 {playerList.map((playerName) => {
                     // Make sure local player gets 1 as assigned number, and everyone else starts from 2
                     const assignedNumber = playerName === localPlayerName ? 1 : startingPlayerNo++

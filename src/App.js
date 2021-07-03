@@ -7,7 +7,7 @@ import ErrorPage from './components/ErrorPage';
 function App() {
   return (
     <div className={styles.Container}>
-      <HashRouter basename={process.env.REACT_APP_PUBLIC_URL}>
+      <HashRouter>
         <Switch>
           <Route path='/' exact component={LobbyPage} />
           <Route path={process.env.REACT_APP_LOBBYPAGE_URL} exact component={LobbyPage} />
