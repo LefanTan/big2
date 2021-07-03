@@ -61,6 +61,7 @@ export default function GamePage(){
                     <p className={styles.p}>CODE: {lobbyCode}</p>
                 </div>
 
+                {/* TODO: Show current player in lobby */}
                 {playerList.map((playerName) => {
                     // Make sure local player gets 1 as assigned number, and everyone else starts from 2
                     const assignedNumber = playerName === localPlayerName ? 1 : startingPlayerNo++

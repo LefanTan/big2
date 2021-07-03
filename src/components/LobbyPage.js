@@ -19,15 +19,24 @@ export default function LobbyPage(){
         return true
     }
 
-    const lobbyEnterHandler = (e) => {
+    const lobbyEnterHandler = () => {
         if(!playerNameFilled())
             return
 
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
+        query.once('value', snap => {
+            if(snap.exists()){
+                let playerList = snap.val()[lobbyCode]['players']
+                playerList.push(playerName)
 
-        query.on('value', snap => {
-            if(snap.exists())
-                console.log("Lobby exist...entering lobby")
+                const lobbyReadRef = roomReadRef.child(`${lobbyCode}`)
+                lobbyReadRef.set({players: playerList})
+
+                history.push({
+                    pathname: process.env.REACT_APP_GAMEPAGE_URL,
+                    search: `?code=${lobbyCode}&name=${playerName}`
+                })
+            }
             else
                 console.log("Lobby doesn't exist")
         })
@@ -56,7 +65,7 @@ export default function LobbyPage(){
 
         // Check if the generated code already exist, if so, generate again
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
-        query.on('value', snap => {
+        query.once('value', snap => {
             if(snap.exists()){
                 lobbyCode = randomAlphaNumericGenerator() + randomAlphaNumericGenerator() + randomAlphaNumericGenerator() + randomAlphaNumericGenerator()
             }
@@ -77,7 +86,7 @@ export default function LobbyPage(){
     return(
         <div className={styles.Container}>
             <p>LOBBY CODE</p>
-            <form onSubmit={lobbyEnterHandler}>
+            <form onSubmit={() => lobbyEnterHandler()}>
                 <input value={lobbyCode} onChange={(e) => setLobbyCode(e.target.value.toUpperCase())} type="text"/>
                 <button type="submit">Enter</button>
                 <button onClick={lobbyCreateHandler}>Create Room</button>
