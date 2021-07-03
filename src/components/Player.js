@@ -10,7 +10,7 @@ export default function Player(props){
     var gridColumnNumber = 0;
 
     // Update gridRowNumber and gridColumnNumber based on local player number
-    switch(props.playerNo){
+    switch(props.playerNo.toString()){
         case '1':
             gridRowNumber = 3
             gridColumnNumber = 3
@@ -52,7 +52,7 @@ export default function Player(props){
     return(
         <div style={playerContainer}>
             <p>{props.children}</p>
-            {props.playerNo === '1' &&
+            {props.playerNo === 1 &&
                 <form onSubmit={submitHandler}>
                     <input type="text" value={text} onChange={(e) => setText(e.target.value)}/>
                 </form>

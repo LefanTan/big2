@@ -65,10 +65,13 @@ export default function LobbyPage(){
         const roomWriteRef = db.ref().child(`Lobbies/${lobbyCode}`)
         roomWriteRef.set({
             id: lobbyCode,
-            players: [playerName, 'Tian']
+            players: [playerName]
         })
         // Redirect to Game Page
-        history.push(process.env.REACT_APP_GAMEPAGE_URL + `/${lobbyCode}`)
+        history.push({
+            pathname: process.env.REACT_APP_GAMEPAGE_URL,
+            search: `?code=${lobbyCode}&name=${playerName}`
+        })
     }
 
     return(

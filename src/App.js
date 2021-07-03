@@ -1,21 +1,20 @@
 import styles from './App.module.css';
 import GamePage from './components/GamePage';
 import LobbyPage from './components/LobbyPage'
-import {Switch, Route, BrowserRouter} from 'react-router-dom'
-import NotFoundPage from './components/NotFoundPage';
+import {Switch, Route, HashRouter} from 'react-router-dom'
+import ErrorPage from './components/ErrorPage';
 
 function App() {
   return (
     <div className={styles.Container}>
-      <BrowserRouter basename={process.env.REACT_APP_PUBLIC_URL}>
+      <HashRouter basename={process.env.REACT_APP_PUBLIC_URL}>
         <Switch>
           <Route path='/' exact component={LobbyPage} />
           <Route path={process.env.REACT_APP_LOBBYPAGE_URL} exact component={LobbyPage} />
-          <Route path={process.env.REACT_APP_GAMEPAGE_URL + `/:lobbyCode`} exact component={GamePage}/>
-          <Route path="*" component={NotFoundPage}/>
-          <Route path="/404" component={NotFoundPage}/>
+          <Route path={process.env.REACT_APP_GAMEPAGE_URL} exact component={GamePage}/>
+          <Route path="*" component={() => <ErrorPage>404 Page not found</ErrorPage>}/>
         </Switch>
-      </BrowserRouter>
+      </HashRouter>
     </div>
   );
 }
