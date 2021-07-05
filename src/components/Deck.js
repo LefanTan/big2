@@ -1,25 +1,32 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import styles from './Deck.module.css'
+import { db } from '../services/Firebase'
+import { useEffect, useState, useRef } from 'react'
 
-export default function Deck (){
+export default function Deck (props){
+    const [chatList, setChatList] = useState([])
+    const messageEndRef = useRef(null)
+
+    // Connect deck to firebase
+    useEffect(() => {
+        const deckRef = db.ref().child('Lobbies').child(props.lobbyCode).child('deck')
+        deckRef.on('value', snap => {
+            if(snap.exists()) {
+                setChatList(Object.values(snap.val()))
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        messageEndRef.current.scrollIntoView({behavior: "smooth"})
+    }, [chatList])
+
     return(
         <div className={styles.Container}>
-            <p>Hey</p>
-            <p>DECK AREA1</p>
-            <p>DECK AREA2</p>
-            <p>DECK AREA3</p>
-            <p>DECK AREA4</p>
-            <p>DECK AREA5</p>
-            <p>DECK AREA6</p>
-            <p>DECK AREA7</p>
-            <p>DECK AREA8</p>
-            <p>DECK AREA9</p>
-            <p>DECK AREA10</p>
-            <p>DECK AREA11</p>
-            <p>DECK AREA12</p>
-            <p>DECK AREA13</p>
-            <p>DECK AREA14</p>
-            <p>DECK AREA15</p>
-            <p>DECK AREA16</p>
+            {chatList.map((chat, index) =>
+                <p key={chat + index}>{chat['content']} - {chat['sender']}</p>
+            )}
+            <div ref={messageEndRef}/>
         </div>
     )
 }

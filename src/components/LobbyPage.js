@@ -20,7 +20,9 @@ export default function LobbyPage(){
     }
 
     // Handles when use click Enter to enter a lobby
-    const lobbyEnterHandler = () => {
+    const lobbyEnterHandler = (e) => {
+        e.preventDefault()
+
         if(!playerNameFilled() || lobbyCode === '')
             return
 
@@ -29,19 +31,16 @@ export default function LobbyPage(){
             if(snap.exists()){
                 let playerList = snap.val()[lobbyCode]['players']
 
+                //TODO: Display proper error here on UI
                 if(playerList.length >= 4){
                     return
                 }
 
-                playerList.push(playerName)
-
-                const lobbyReadRef = roomReadRef.child(`${lobbyCode}`)
-                lobbyReadRef.set({players: playerList})
-
-                history.push({
+                const playerReadRef = roomReadRef.child(`${lobbyCode}`).child('players')
+                playerReadRef.push({name: playerName}).then(history.push({
                     pathname: process.env.REACT_APP_GAMEPAGE_URL,
                     search: `?code=${lobbyCode}&name=${playerName}`
-                })
+                }))
             }
             else
                 console.log("Lobby doesn't exist")
@@ -80,9 +79,12 @@ export default function LobbyPage(){
 
         const roomWriteRef = db.ref().child(`Lobbies/${lobbyCode}`)
         roomWriteRef.set({
-            id: lobbyCode,
-            players: [playerName]
+            id: lobbyCode
         })
+        roomWriteRef.child('players').push({
+            name: playerName
+        })
+        
         // Redirect to Game Page
         history.push({
             pathname: process.env.REACT_APP_GAMEPAGE_URL,

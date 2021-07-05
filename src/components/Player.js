@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { db } from "../services/Firebase";
 
 /* Prop: 
 playerNo = Determines where the player will be showned locally on screen, client should always be Player1
 */
 export default function Player(props){
-    const [text, setText] = useState('')
+    const [inputText, setInputText] = useState('')
 
     var gridRowNumber = 0;
     var gridColumnNumber = 0;
+
+    useEffect(() => {
+    }, [])
 
     // Update gridRowNumber and gridColumnNumber based on local player number
     switch(props.playerNo.toString()){
@@ -45,8 +49,16 @@ export default function Player(props){
     }
 
     const submitHandler = (e) => {
-        console.log(text)
-        setText('')
+        e.preventDefault()
+
+        // TODO: Send text to the deck
+        const deckRef = db.ref().child('Lobbies').child(props.lobbyCode).child('deck')
+        deckRef.push({
+            sender: props.playerData['name'],
+            timestamp: Date.now(),
+            content: inputText
+        })
+        setInputText('')
     }
 
     return(
@@ -54,7 +66,7 @@ export default function Player(props){
             <p>{props.children}</p>
             {props.playerNo === 1 &&
                 <form onSubmit={submitHandler}>
-                    <input type="text" value={text} onChange={(e) => setText(e.target.value)}/>
+                    <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)}/>
                 </form>
             }
         </div>

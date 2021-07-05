@@ -23,14 +23,14 @@ export default function GamePage(){
     const lobbyCode = location.search.substring(lobbyStrIndex + 5, nameStrIndex - 1)
     const localPlayerName = location.search.substring(nameStrIndex + 5)
 
-    const [playerList, setPlayerList] = useState([])
+    const [playerObjDict, setPlayerObjDict] = useState([])
     var startingPlayerNo = 2
 
     useEffect(() => {
         if(lobbyExist){
             const playerListQuery = roomReadRef.child(lobbyCode)
             playerListQuery.on('value', snap => {
-                if(snap.exists()) setPlayerList(snap.val()['players'])
+                if(snap.exists()) {setPlayerObjDict(snap.val()['players']) }
             })  
         }
     }, [lobbyExist])
@@ -46,20 +46,18 @@ export default function GamePage(){
     // Handles when local player exit the game lobby
     // If last person to exit, delete the lobby
     const exitHandler = () => {
-        const query = roomReadRef.orderByKey().equalTo(lobbyCode)
-        query.once('value', snap => {
-            let newPlayerList = (snap.val()[lobbyCode]['players']).filter(x => x !== localPlayerName)
-            
-            // set new list that doesn't contain the local player
-            const lobbyReadRef = roomReadRef.child(lobbyCode)
-            lobbyReadRef.set({
-                players: newPlayerList
-            })
-
-            if(newPlayerList.length === 0)
-                lobbyReadRef.remove()
+        Object.entries(playerObjDict).forEach(([k, v]) => {
+            if(v.name === localPlayerName){
+                // Remove the player from the players list
+                roomReadRef.child(`${lobbyCode}/players/${k}`).remove()
+            }
         })
 
+        const playerListQuery = roomReadRef.child(`${lobbyCode}/players`)
+        playerListQuery.once('value', snap => {
+            if(!snap.exists()) roomReadRef.child(lobbyCode).remove().then(history.push(process.env.REACT_APP_LOBBYPAGE_URL))
+        })
+        
         history.push(process.env.REACT_APP_LOBBYPAGE_URL)
     }
 
@@ -81,12 +79,12 @@ export default function GamePage(){
                     <p className={styles.p}>CODE: {lobbyCode}</p>
                 </div>
 
-                {playerList.map((playerName) => {
+                {Object.values(playerObjDict).map((playerObj, index) => {
                     // Make sure local player gets 1 as assigned number, and everyone else starts from 2
-                    const assignedNumber = playerName === localPlayerName ? 1 : startingPlayerNo++
-                    return(<Player key={assignedNumber} playerNo={assignedNumber}>{playerName}</Player>)
+                    const assignedNumber = playerObj['name'] === localPlayerName ? 1 : startingPlayerNo++
+                    return(<Player key={assignedNumber} playerData={playerObj} playerIndex={index} lobbyCode={lobbyCode} playerNo={assignedNumber}>{playerObj['name']}</Player>)
                 })}
-                <Deck/>
+                <Deck lobbyCode={lobbyCode}/>
             </div> 
             : <ErrorPage>404 Lobby not found</ErrorPage>
         )
