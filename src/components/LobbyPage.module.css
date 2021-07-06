@@ -1,9 +1,180 @@
+@import '../index.css';
+
 .Container{
-    background-color: azure;
     width: 100%;
     height: 100%;
 
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.inputContainer{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+
+    max-width: 70%;
+    width: 50%;
+    height: 100%;
+
+    background-color: var(--main-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.leftBackgroundContainer{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    width: 50%;
+    height: 100%;
+    background-color: var(--secondary-color);
+
+    z-index: -2;
+}
+
+.leftBackground{
+    width: auto;
+    height: auto;
+
+    max-height: 100%;
+
+    position: absolute;
+    z-index: -1;
+    
+    right: 0%;
+}
+
+.leftBackgroundClicked{
+    transition: 300ms;
+    composes: leftBackground;
+
+    right: 50%;
+}
+
+.rightBackgroundContainer{
+    position: absolute;
+    right: 0px;
+    top: 0px;
+
+    width: 50%;
+    height: 100%;
+    background-color: var(--main-color);
+    
+    z-index: -2;
+}
+
+.rightBackground{
+    width: auto;
+    height: auto;
+
+    max-height: 100%;
+
+    position: absolute;
+    z-index: -1;
+    left: 0%;
+}
+
+.rightBackgroundClicked{
+    transition: 300ms;
+    composes: rightBackground;
+
+    left: -50%;
+}
+
+.titleContainer{
+    position: absolute;
+    width: 70%;
+    height: 100%;
+
+    left: 30%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.rowContainer{
+    width: fit-content;
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.playButton{
+    width: 80px;
+    height: 40px;
+    margin-left: 40%;
+    composes: genericButton from '../index.css'
+}
+
+.playButton:hover {
+    transition: 200ms;
+    transform: scale(1.1);
+}
+
+.playButton:active {
+    transition: 200ms;
+    transform: scale(1);
+}
+
+.button{
+    width: fit-content;
+    height: 30px;
+    composes: genericButton from '../index.css';
+    margin: 2px;
+
+    font-size: medium;
+}
+
+.button:hover {
+    transition: 200ms;
+    background-color: var(--secondary-color-hover);
+}
+
+.button:active {
+    transition: 200ms;
+    transform: scale(0.96);
+}
+
+.p{
+    composes: genericText from '../index.css';
+    font-weight: 400;
+    color: var(--secondary-color);
+
+    font-size: large;
+}
+
+.errorMsg{
+    composes: genericText from '../index.css';
+    color: var(--main-color);
+    background-color: var(--secondary-color);
+
+    margin-top: 20px;
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
+.inputField{
+    height: 35px;
+
+    background-color: transparent;
+    border: 0px;
+    outline: none;
+    border-bottom: 1px solid var(--secondary-color);
+
+    margin-right: 5px;
+    margin-bottom: 15px;
+
+    composes: genericText from '../index.css';
+    font-size: large;
+    color: var(--secondary-color);
+    list-style:circle;
 }

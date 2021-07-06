@@ -33,6 +33,15 @@ export default function GamePage(){
                 if(snap.exists()) {setPlayerObjDict(snap.val()['players']) }
             })  
         }
+
+        window.addEventListener('beforeunload', (event) => {
+            // Cancel the event as stated by the standard.
+            event.preventDefault();
+            // Chrome requires returnValue to be set.
+            event.returnValue = '';
+            console.log('test')
+            return exitClickedHandler()
+          });
     }, [lobbyExist])
 
     useEffect(() => {
@@ -43,9 +52,10 @@ export default function GamePage(){
         })
     }, [lobbyCode])
     
+
     // Handles when local player exit the game lobby
     // If last person to exit, delete the lobby
-    const exitHandler = () => {
+    const exitClickedHandler = () => {
         Object.entries(playerObjDict).forEach(([k, v]) => {
             if(v.name === localPlayerName){
                 // Remove the player from the players list
@@ -55,7 +65,7 @@ export default function GamePage(){
 
         const playerListQuery = roomReadRef.child(`${lobbyCode}/players`)
         playerListQuery.once('value', snap => {
-            if(!snap.exists()) roomReadRef.child(lobbyCode).remove().then(history.push(process.env.REACT_APP_LOBBYPAGE_URL))
+            if(!snap.exists()) roomReadRef.child(lobbyCode).remove()
         })
         
         history.push(process.env.REACT_APP_LOBBYPAGE_URL)
@@ -72,7 +82,7 @@ export default function GamePage(){
             lobbyExist ?
             <div className={styles.Container}>
                 <div className={styles.userCorner}>
-                    <button className={styles.exitButton} onClick={() => exitHandler()}>
+                    <button className={styles.exitButton} onClick={() => exitClickedHandler()}>
                         <IoExitOutline className={styles.exitIcon}/>
                         <p className={styles.exitTooltip}>Exit</p>
                     </button>

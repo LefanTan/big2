@@ -2,18 +2,22 @@ import { useState } from 'react'
 import {useHistory} from 'react-router-dom'
 import {db} from '../services/Firebase'
 import styles from './LobbyPage.module.css'
+import leftBackground from '../assets/leftBackground.png'
+import rightBackground from '../assets/rightBackground.png'
 
 export default function LobbyPage(){
     const history = useHistory()
     var [lobbyCode, setLobbyCode] = useState('')
-    var [playerName, setPlayerName] = useState('')
+    const [playerName, setPlayerName] = useState('')
+    const [playClicked, setPlayClicked] = useState(false)
+    const [errorMsg, setErrorMsg] = useState('')
 
     const roomReadRef = db.ref().child(`Lobbies`)
 
     // Check if player name field is filled, if not, show an alert and return false
     const playerNameFilled = () => {
         if(playerName.length === 0){
-            alert('Please enter a name')
+            setErrorMsg('Please enter a name')
             return false
         }
         return true
@@ -23,8 +27,13 @@ export default function LobbyPage(){
     const lobbyEnterHandler = (e) => {
         e.preventDefault()
 
-        if(!playerNameFilled() || lobbyCode === '')
+        if(!playerNameFilled())
             return
+
+        if(lobbyCode === ''){
+            setErrorMsg('Please enter a lobby code')
+            return
+        }
 
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
         query.once('value', snap => {
@@ -33,7 +42,7 @@ export default function LobbyPage(){
 
                 //TODO: Display proper error here on UI
                 if(playerList.length >= 4){
-                    return
+                    setErrorMsg("Lobby full")
                 }
 
                 const playerReadRef = roomReadRef.child(`${lobbyCode}`).child('players')
@@ -43,7 +52,7 @@ export default function LobbyPage(){
                 }))
             }
             else
-                console.log("Lobby doesn't exist")
+                setErrorMsg("Lobby doesn't exist")
         })
         setLobbyCode('')
     }
@@ -84,7 +93,7 @@ export default function LobbyPage(){
         roomWriteRef.child('players').push({
             name: playerName
         })
-        
+
         // Redirect to Game Page
         history.push({
             pathname: process.env.REACT_APP_GAMEPAGE_URL,
@@ -94,14 +103,32 @@ export default function LobbyPage(){
 
     return(
         <div className={styles.Container}>
-            <p>LOBBY CODE</p>
-            <form onSubmit={lobbyEnterHandler}>
-                <input value={lobbyCode} onChange={(e) => setLobbyCode(e.target.value.toUpperCase())} type="text"/>
-                <button type="submit">Enter</button>
-                <button onClick={lobbyCreateHandler}>Create Room</button>
-            </form>
-            <p>PLAYER NAME</p>
-            <input value={playerName} onChange={(e) => setPlayerName(e.target.value)} type="text"/>
+            {playClicked ? 
+            <div className={styles.inputContainer}>
+                <p className={styles.p}>Lobby Code</p>
+                <form onSubmit={lobbyEnterHandler}>
+                    <div className={styles.rowContainer}>
+                        <input className={styles.inputField} value={lobbyCode} onChange={(e) => setLobbyCode(e.target.value.toUpperCase())} type="text"/>
+                        <button className={styles.button} type="submit">Enter</button>
+                        <p className={styles.p}>&ensp;Or&ensp;</p> <br/>
+                        <button className={styles.button} onClick={lobbyCreateHandler}>Create A Room</button>
+                    </div>
+                </form>
+                <p className={styles.p}>Player Name</p>
+                <input className={styles.inputField} value={playerName} onChange={(e) => setPlayerName(e.target.value)} type="text"/> 
+
+                {errorMsg !== '' && <h1 className={styles.errorMsg}>{errorMsg}</h1>}
+            </div>
+            : <button className={styles.playButton} onClick={() => setPlayClicked(true)}>Play</button>}
+         
+            <div className={styles.leftBackgroundContainer}>
+                <img src={leftBackground} alt='leftBackground' className={playClicked ? styles.leftBackgroundClicked : styles.leftBackground}/>
+            </div>
+            
+            <div className={styles.rightBackgroundContainer}>
+                <img src={rightBackground} alt='rightBackground' className={playClicked ? styles.rightBackgroundClicked : styles.rightBackground}/>
+            </div>
+
         </div>
     )
 }

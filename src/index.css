@@ -16,12 +16,26 @@ code {
 
 /* Variables to be used across the web app */
 :root{
-  --main-color: #4281ff;
-  --main-color-hover: #2f62c9;
-  --secondary-color: #ffffff;
+  --main-color: #ee6055;
+  --main-color-hover: #cc4b42;
+  --secondary-color: #ffe6af;
+  --secondary-color-hover: #eed193;
 }
 
-.generalText{
+.genericButton{
+  border: 0;
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+  border-radius: 0px;
+
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+
+  font-size: x-large;
+}
+
+.genericText{
   color: var(--main-color);
   background-color: inherit;
 

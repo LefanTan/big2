@@ -89,7 +89,7 @@
   }
 
   .p{
-    composes: generalText from '../index.css';
+    composes: genericText from '../index.css';
 
     line-height: 40px;
     text-align: center;
@@ -98,6 +98,6 @@
   }
 
   .h1{
-    composes: generalText from '../index.css';
+    composes: genericText from '../index.css';
     font-size: xx-large;
   }
