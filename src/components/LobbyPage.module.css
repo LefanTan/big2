@@ -109,10 +109,14 @@
 }
 
 .playButton{
-    width: 80px;
+    width: 10%;
+    max-width: 80px;
+    min-width: fit-content;
     height: 40px;
     margin-left: 40%;
-    composes: genericButton from '../index.css'
+
+    composes: genericButton from '../index.css';
+    font-size: auto;
 }
 
 .playButton:hover {
@@ -164,6 +168,7 @@
 
 .inputField{
     height: 35px;
+    width: 15vw;
 
     background-color: transparent;
     border: 0px;

@@ -3,6 +3,7 @@ import Deck from './Deck.js';
 import Player from './Player.js'
 import styles from './GamePage.module.css'
 import {db} from '../services/Firebase'
+import { Prompt } from 'react-router';
 import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
@@ -33,16 +34,16 @@ export default function GamePage(){
                 if(snap.exists()) {setPlayerObjDict(snap.val()['players']) }
             })  
         }
-
-        window.addEventListener('beforeunload', (event) => {
-            // Cancel the event as stated by the standard.
-            event.preventDefault();
-            // Chrome requires returnValue to be set.
-            event.returnValue = '';
-            console.log('test')
-            return exitClickedHandler()
-          });
     }, [lobbyExist])
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser)
+        window.addEventListener('unload', exitClickedHandler)
+        return () => {
+            window.removeEventListener('beforeunload', alertUser)
+            window.removeEventListener('unload', exitClickedHandler)
+        }
+    }) 
 
     useEffect(() => {
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
@@ -51,7 +52,11 @@ export default function GamePage(){
             setLoading(false)
         })
     }, [lobbyCode])
-    
+
+    const alertUser = e => {
+        e.preventDefault()
+        e.returnValue = ''  
+    }
 
     // Handles when local player exit the game lobby
     // If last person to exit, delete the lobby
@@ -67,7 +72,7 @@ export default function GamePage(){
         playerListQuery.once('value', snap => {
             if(!snap.exists()) roomReadRef.child(lobbyCode).remove()
         })
-        
+        console.log('test')
         history.push(process.env.REACT_APP_LOBBYPAGE_URL)
     }
 
