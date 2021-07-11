@@ -1,103 +1,156 @@
 @import '../index.css';
 
 .Container{
-    width: 100%;
-    height: 100%;
-  
-    display: grid;
-    grid-template-rows: 25% 50% 25%;
-    grid-template-columns: 20% 5% 50% 5% 20%;
-  
-    justify-content: center;
-    align-items: center;
-  }
+  width: 100%;
+  height: 100%;
 
-  .loadingContainer{
-    width: 100%;
-    height: 100%;
+  background-color: var(--main-color);
+  display: grid;
+  grid-template-rows: 25% 50% 25%;
+  grid-template-columns: 20% 5% 50% 5% 20%;
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  justify-content: center;
+  align-items: center;
+}
 
-  .userCorner{
-    grid-row-start: 1;
-    grid-column-start: 1;
+.loadingContainer{
+  width: 100%;
+  height: 100%;
 
-    width: 100%;
-    height: 100%;
-    padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    display: flex;
-  }
+.userCorner{
+  grid-row-start: 1;
+  grid-column-start: 1;
 
-  .exitButton{
-    background-color: inherit;
-    border: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
 
-    transform: rotate(180deg);
-    width: 40px;
-    height: 40px;
+  display: flex;
+}
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.exitButton{
+  background-color: inherit;
+  border: 0;
 
-    position: relative;
-    margin: 1px;
-  }
+  transform: rotate(180deg);
+  width: 40px;
+  height: 40px;
 
-  .exitButton:hover .exitTooltip {
-    visibility: visible;
-    opacity: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-    transition: opacity 0.3s;
-  }
+  position: relative;
+  margin: 1px;
+}
 
-  .exitButton .exitTooltip{
-    visibility: hidden;
-    opacity: 0;
+.exitButton:hover .exitTooltip {
+  visibility: visible;
+  opacity: 1;
 
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-style: normal;
-    transform: rotate(180deg);
+  transition: opacity 0.3s;
+}
 
-    margin: 0;
-    padding: 5px;
+.exitButton .exitTooltip{
+  visibility: hidden;
+  opacity: 0;
 
-    position: absolute;
-    bottom: 35px;
-    right: 5px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  transform: rotate(180deg);
 
-    background-color: var(--main-color);
-    color: var(--secondary-color);
+  margin: 0;
+  padding: 5px;
 
-    border-radius: 5px;
-  }
+  position: absolute;
+  bottom: 35px;
+  right: 5px;
 
-  .exitIcon{
-    width: inherit;
-    height: inherit;
-    color: var(--main-color);
-  }
+  color: var(--secondary-color);
 
-  .exitIcon:hover{
-    color: var(--main-color-hover);
-    transform: translateY(-1px);
-  }
+  border-radius: 5px;
+}
 
-  .p{
-    composes: genericText from '../index.css';
+.exitIcon{
+  width: inherit;
+  height: inherit;
+  color: var(--secondary-color);
+}
 
-    line-height: 40px;
-    text-align: center;
-    font-size: medium;
-    margin-top: 2px;
-  }
+.exitIcon:hover{
+  color: var(--secondary-color-hover);
+  transform: translateY(-1px);
+}
 
-  .h1{
-    composes: genericText from '../index.css';
-    font-size: xx-large;
-  }
+.rowContainer{
+  display: flex;
+  justify-content: center;
+
+  margin-bottom: 15px;
+}
+
+.readyCircle{
+  background-color: transparent;
+  height: 5%;
+  width: 5%;
+
+  margin: 4.5px;
+}
+
+.playerReadyContainer{
+  grid-row-start: 2;
+  grid-column-start: 3;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.words{
+  composes: genericText from '../index.css';
+  color: var(--secondary-color);
+  font-weight: 400;
+}
+
+.playButton{
+  composes: genericButton from '../index.css';
+  color: var(--secondary-color);
+  background-color: transparent;
+  font-size: xx-large;
+  height: fit-content;
+
+  transition: 200ms;
+  transform: scale(1);
+}
+
+.playButton:hover{
+  transition: 200ms;
+  transform: scale(1.1);
+}
+
+.playButton:active{
+  transition: 200ms;
+  color: var(--secondary-color-hover);
+}
+
+.p{
+  composes: genericText from '../index.css';
+
+  color: var(--secondary-color);
+  line-height: 40px;
+  text-align: center;
+  font-size: medium;
+  margin-top: 2px;
+}
+
+.h1{
+  composes: genericText from '../index.css';
+  font-size: xx-large;
+}

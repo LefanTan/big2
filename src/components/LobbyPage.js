@@ -46,7 +46,10 @@ export default function LobbyPage(){
                 }
 
                 const playerReadRef = roomReadRef.child(`${lobbyCode}`).child('players')
-                playerReadRef.push({name: playerName}).then(history.push({
+                playerReadRef.push({
+                    name: playerName,
+                    ready: false
+                }).then(history.push({
                     pathname: process.env.REACT_APP_GAMEPAGE_URL,
                     search: `?code=${lobbyCode}&name=${playerName}`
                 }))
@@ -91,7 +94,8 @@ export default function LobbyPage(){
             id: lobbyCode
         })
         roomWriteRef.child('players').push({
-            name: playerName
+            name: playerName,
+            ready: false
         })
 
         // Redirect to Game Page

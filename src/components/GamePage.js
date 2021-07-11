@@ -3,19 +3,22 @@ import Deck from './Deck.js';
 import Player from './Player.js'
 import styles from './GamePage.module.css'
 import {db} from '../services/Firebase'
-import { Prompt } from 'react-router';
 import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
 import ErrorPage from './ErrorPage.js';
+import circle from '../assets/circle.png';
+import circleFilled from '../assets/circle-filled.png';
 
 export default function GamePage(){
     const roomReadRef = db.ref().child(`Lobbies`)
     const location = useLocation()
     const history = useHistory()
 
-    const [lobbyExist, setLobbyExist] = useState(false);
+    const [lobbyExist, setLobbyExist] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [startGame, setStartGame] = useState(false)
+    const [playerObjDict, setPlayerObjDict] = useState([])
 
     const lobbyStrIndex = location.search.indexOf('code=')
     const nameStrIndex = location.search.indexOf('name=')
@@ -24,14 +27,13 @@ export default function GamePage(){
     const lobbyCode = location.search.substring(lobbyStrIndex + 5, nameStrIndex - 1)
     const localPlayerName = location.search.substring(nameStrIndex + 5)
 
-    const [playerObjDict, setPlayerObjDict] = useState([])
     var startingPlayerNo = 2
 
     useEffect(() => {
         if(lobbyExist){
             const playerListQuery = roomReadRef.child(lobbyCode)
             playerListQuery.on('value', snap => {
-                if(snap.exists()) {setPlayerObjDict(snap.val()['players']) }
+                if(snap.exists()) {setPlayerObjDict(snap.val()['players'])}
             })  
         }
     }, [lobbyExist])
@@ -46,6 +48,13 @@ export default function GamePage(){
     }) 
 
     useEffect(() => {
+        // Make sure the ready words and buttons doesn't dissapear too suddently
+        setTimeout(() => {
+            if(Object.keys(playerObjDict).length > 0 && typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') setStartGame(true)
+        }, 1000);
+    }, [playerObjDict])
+
+    useEffect(() => {
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
         query.once('value', snap => {
             setLobbyExist(snap.exists())
@@ -56,6 +65,18 @@ export default function GamePage(){
     const alertUser = e => {
         e.preventDefault()
         e.returnValue = ''  
+    }
+
+    const playerReadyHandler = () => {
+        const playerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
+        const playerQuery = roomReadRef.child(lobbyCode).child(`/players/${playerKey}`)
+
+        playerQuery.once('value', snap => {
+            playerQuery.set({
+                ...snap.val(),
+                ready: true
+            })  
+        })
     }
 
     // Handles when local player exit the game lobby
@@ -72,7 +93,6 @@ export default function GamePage(){
         playerListQuery.once('value', snap => {
             if(!snap.exists()) roomReadRef.child(lobbyCode).remove()
         })
-        console.log('test')
         history.push(process.env.REACT_APP_LOBBYPAGE_URL)
     }
 
@@ -86,6 +106,15 @@ export default function GamePage(){
         return( 
             lobbyExist ?
             <div className={styles.Container}>
+                {!startGame && 
+                    <div className={styles.playerReadyContainer}>
+                        <div className={styles.rowContainer}>
+                            {Object.values(playerObjDict).map(player =>  <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button'/> )}
+                        </div>
+                        <button className={styles.playButton} onClick={playerReadyHandler}>Ready!</button> 
+                        <p className={styles.words}>please make sure you're actually ready ☉_☉</p>
+                    </div>
+                }
                 <div className={styles.userCorner}>
                     <button className={styles.exitButton} onClick={() => exitClickedHandler()}>
                         <IoExitOutline className={styles.exitIcon}/>
