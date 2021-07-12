@@ -7,6 +7,7 @@ import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
 import ErrorPage from './ErrorPage.js';
+import cardTypes from '../data structure/deck.json';
 import circle from '../assets/circle.png';
 import circleFilled from '../assets/circle-filled.png';
 
@@ -26,7 +27,8 @@ export default function GamePage(){
     // Get the lobby code and local player name from the Url
     const lobbyCode = location.search.substring(lobbyStrIndex + 5, nameStrIndex - 1)
     const localPlayerName = location.search.substring(nameStrIndex + 5)
-
+    
+    var initialDeck = cardTypes;
     var startingPlayerNo = 2
 
     useEffect(() => {
@@ -46,6 +48,13 @@ export default function GamePage(){
             window.removeEventListener('unload', exitClickedHandler)
         }
     }) 
+
+    useEffect(() => {
+        if(startGame){
+            // TODO: Deal cards
+            
+        }
+    }, [startGame])
 
     useEffect(() => {
         // Make sure the ready words and buttons doesn't dissapear too suddently
@@ -112,7 +121,7 @@ export default function GamePage(){
                             {Object.values(playerObjDict).map(player =>  <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button'/> )}
                         </div>
                         <button className={styles.playButton} onClick={playerReadyHandler}>Ready!</button> 
-                        <p className={styles.words}>please make sure you're actually ready ☉_☉</p>
+                        <p className={styles.words}>only click if you're actually ready of course ☉_☉</p>
                     </div>
                 }
                 <div className={styles.userCorner}>

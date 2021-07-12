@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import styles from './Player.module.css';
 import { db } from "../services/Firebase";
+import twoSpade from '../assets/cards/02S.png'
 
 /* Prop: 
 playerNo = Determines where the player will be showned locally on screen, client should always be Player1
@@ -36,14 +38,13 @@ export default function Player(props){
     }
 
     var playerContainer = {
-        backgroundColor: 'beige',
         gridRowStart: `${gridRowNumber}`,
         gridColumnStart: `${gridColumnNumber}`,
         width: '100%',
         height: '100%',
 
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems:  'center'
     }
@@ -64,6 +65,7 @@ export default function Player(props){
     return(
         <div style={playerContainer}>
             <p>{props.children}</p>
+            <img src={twoSpade} className={styles.cardImage} alt='t'/>
             {props.playerNo === 1 &&
                 <form onSubmit={submitHandler}>
                     <input type="text" value={inputText} onChange={(e) => setInputText(e.target.value)}/>
