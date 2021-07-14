@@ -76,7 +76,7 @@ export default function Player(props){
                     var left = `${90 / (playerCards.length - 1) * index}%`
                     if(playerCards.length < 10)
                         left =`${((10 - playerCards.length) * 10) / 2 + index * 10}%`
-                    return <Card left={left} cardClickedHandler={cardClickedHandler} cardType={cardType}/>    
+                    return <Card left={left} cardClickedHandler={cardClickedHandler} cardType={props.playerNo === 1 ? cardType : 'back'}/>    
                 })}
             </div>
             {/* <img src={twoSpade} className={styles.cardImage} alt='t'/> */}
