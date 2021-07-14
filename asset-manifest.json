@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/big2/static/css/main.4921be30.chunk.css",
-    "main.js": "/big2/static/js/main.0e9beada.chunk.js",
-    "main.js.map": "/big2/static/js/main.0e9beada.chunk.js.map",
+    "main.js": "/big2/static/js/main.16891044.chunk.js",
+    "main.js.map": "/big2/static/js/main.16891044.chunk.js.map",
     "runtime-main.js": "/big2/static/js/runtime-main.6575ed31.js",
     "runtime-main.js.map": "/big2/static/js/runtime-main.6575ed31.js.map",
     "static/js/2.0438ee8e.chunk.js": "/big2/static/js/2.0438ee8e.chunk.js",
@@ -64,7 +64,7 @@
     "static/media/10D.png": "/big2/static/media/10D.fb5e7ad7.png",
     "static/media/10L.png": "/big2/static/media/10L.de56149e.png",
     "static/media/10S.png": "/big2/static/media/10S.0f4121c8.png",
-    "static/media/back.png": "/big2/static/media/back.18f8ab0c.png",
+    "static/media/back.png": "/big2/static/media/back.d2784155.png",
     "static/media/circle-filled.140c7c5b.png": "/big2/static/media/circle-filled.140c7c5b.png",
     "static/media/circle.53f8fa04.png": "/big2/static/media/circle.53f8fa04.png",
     "static/media/leftBackground.66308860.png": "/big2/static/media/leftBackground.66308860.png",
@@ -74,6 +74,6 @@
     "static/js/runtime-main.6575ed31.js",
     "static/js/2.0438ee8e.chunk.js",
     "static/css/main.4921be30.chunk.css",
-    "static/js/main.0e9beada.chunk.js"
+    "static/js/main.16891044.chunk.js"
   ]
 }
