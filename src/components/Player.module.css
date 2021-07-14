@@ -1,4 +1,35 @@
-.cardImage{
+.cardContainer{
+    grid-row-start: 1;
+    grid-column-start: 1;
+
+    display: flex;
+    flex-direction: row;
+    position:relative;
+}
+
+.userName{
+    margin: 0%;
+    padding: 0%;
+    width: 100%;
     height: 100%;
-    filter: drop-shadow(-3px 5px 2px #6a6161);
+
+    grid-row-start: 2;
+    grid-column-start: 1;
+
+    display: flex;
+    justify-content: center;
+
+    composes: genericText from '../index.css';
+    font-weight: 600;
+    font-size: larger;
+    color: var(--secondary-color);
+}
+
+.userNameOnTurn{
+    composes: genericText from '../index.css';
+    font-weight: 600;
+    font-size: larger;
+
+    background-color: var(--secondary-color);
+    color: var(--main-color);
 }
