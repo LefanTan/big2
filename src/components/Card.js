@@ -7,19 +7,23 @@ cardClickedHandler
 */
 export default function Card(props){
         
+
+
     var cardButtonStyle = {
         position: 'absolute',
-        left: `${props.left}`,
-        right: `${props.right}`,
+        left: `${props.left}%`,
+        right: `${props.right}%`,
+        top: `${props.top}% `,
         padding: '0%',
         border: '0',
         backgroundColor: 'transparent',
-        width: '10%'
+        width: `${props.width}%`,
+        height: `${props.height}%`
     }
 
     return(
         <button style={cardButtonStyle} onClick={() => props.cardClickedHandler(props.cardType)}> 
-            <img className={styles.cardImage} src={GetCardImage(props.cardType)} alt='card'/>
+            <img className={props.height !== 'auto' ? styles.cardImageVertical : styles.cardImage} src={GetCardImage(props.cardType)} alt='card'/>
         </button>
     )
 }

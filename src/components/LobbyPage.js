@@ -91,7 +91,8 @@ export default function LobbyPage(){
 
         const roomWriteRef = db.ref().child(`Lobbies/${lobbyCode}`)
         roomWriteRef.set({
-            id: lobbyCode
+            id: lobbyCode,
+            started: false
         })
         roomWriteRef.child('players').push({
             name: playerName,
