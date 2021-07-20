@@ -6,10 +6,12 @@ import {db} from '../services/Firebase'
 import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
+import { IoIosInformationCircle } from 'react-icons/io'
 import ErrorPage from './ErrorPage.js';
 import cardTypes from '../data structure/deck.json';
 import circle from '../assets/circle.png';
 import circleFilled from '../assets/circle-filled.png';
+import { shuffleArray } from '../services/Helpers.js';
 
 export default function GamePage(){
     const roomReadRef = db.ref().child(`Lobbies`)
@@ -31,6 +33,7 @@ export default function GamePage(){
     var initialDeck = cardTypes;
     var startingPlayerNo = 2
 
+    // update player obj dict
     useEffect(() => {
         if(lobbyExist){
             const playerListQuery = roomReadRef.child(lobbyCode)
@@ -39,6 +42,15 @@ export default function GamePage(){
             })  
         }
     }, [lobbyExist])
+
+    // Before entering game
+    useEffect(() => {
+        const query = roomReadRef.orderByKey().equalTo(lobbyCode)
+        query.once('value', snap => {
+            setLobbyExist(snap.exists())
+            setLoading(false)
+        })
+    }, [lobbyCode])
 
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser)
@@ -49,27 +61,42 @@ export default function GamePage(){
         }
     }) 
 
+    // Card dealing
     useEffect(() => {
-        if(startGame){
-            // TODO: Deal cards
-            
+        var isHost = Object.values(playerObjDict).find(x => x['host'] === true && x['name'] === localPlayerName)
+
+        // Deal cards only if everyone is ready, and the person is a host
+        if(startGame && isHost){
+            shuffleArray(initialDeck)
+            let playerIndex = 0
+            let playerKeys = Object.keys(playerObjDict)
+
+            // Remove all cards from players if they exist
+            for(let i = 0; i < playerKeys.length; i++){
+                roomReadRef.child(`${lobbyCode}/players/${playerKeys[i]}/cards`).remove()
+            }
+            // Loop through the cards and deal them to player with a slight delay
+            for(let i = 0; i < initialDeck.length; i++){
+                console.log(playerObjDict[playerKeys[playerIndex % playerKeys.length]]['name'])
+                const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[playerIndex++ % playerKeys.length]}/cards`)
+                setTimeout(() => {
+                    playerDeckQuery.push({cardType: initialDeck[i]})
+                }, 1000)
+            }
         }
     }, [startGame])
 
     useEffect(() => {
         // Make sure the ready words and buttons doesn't dissapear too suddently
         setTimeout(() => {
-            if(Object.keys(playerObjDict).length > 0 && typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') setStartGame(true)
+            // Only allow game to start if all player click ready, if only 1 player, clicking ready won't start
+            if(Object.keys(playerObjDict).length > 1 && typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') {
+                roomReadRef.child(`${lobbyCode}`).update({started: true})
+                setStartGame(true)
+            }
         }, 1000);
     }, [playerObjDict])
 
-    useEffect(() => {
-        const query = roomReadRef.orderByKey().equalTo(lobbyCode)
-        query.once('value', snap => {
-            setLobbyExist(snap.exists())
-            setLoading(false)
-        })
-    }, [lobbyCode])
 
     const alertUser = e => {
         e.preventDefault()
@@ -115,21 +142,26 @@ export default function GamePage(){
         return( 
             lobbyExist ?
             <div className={styles.Container}>
-                {!startGame && 
+                {!startGame &&
                     <div className={styles.playerReadyContainer}>
                         <div className={styles.rowContainer}>
                             {Object.values(playerObjDict).map(player =>  <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button'/> )}
                         </div>
                         <button className={styles.playButton} onClick={playerReadyHandler}>Ready!</button> 
-                        <p className={styles.words}>only click if you're actually ready of course ☉_☉</p>
+                        <p className={styles.words}>{typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined' && Object.keys(playerObjDict).length === 1 
+                        ? 'Hmmmm, the game needs more than 1 player to start ¯\\_( ͡❛ ͜ʖ ͡❛)_/¯' : "only click if you're actually ready, of course ☉_☉" }</p>
                     </div>
                 }
                 <div className={styles.userCorner}>
-                    <button className={styles.exitButton} onClick={() => exitClickedHandler()}>
-                        <IoExitOutline className={styles.exitIcon}/>
-                        <p className={styles.exitTooltip}>Exit</p>
+                    <button className={styles.cornerButton} onClick={() => exitClickedHandler()}>
+                        <IoExitOutline className={styles.cornerIcon}/>
+                        <p className={styles.tooltip}>Exit</p>
                     </button>
                     <p className={styles.p}>CODE: {lobbyCode}</p>
+                    <button className={styles.cornerButton}>
+                        <IoIosInformationCircle className={styles.cornerIcon}/>
+                        <p className={styles.tooltip}>Info</p>
+                    </button>
                 </div>
 
                 {Object.values(playerObjDict).map((playerObj, index) => {

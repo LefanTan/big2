@@ -1,9 +1,12 @@
+@import '../index.css';
+
 .userName{
-    margin: 0%;
+    margin: 1%;
     padding: 0%;
     height: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
 
     composes: genericText from '../index.css';
     font-weight: 600;
@@ -11,18 +14,51 @@
     color: var(--secondary-color);
 }
 
-.userNameVertical{
-    margin: 0%;
-    padding: 0%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-
-    composes: genericText from '../index.css';
-    font-weight: 600;
-    font-size: larger;
-    color: var(--secondary-color);
+.userNameRight{
+    composes: userName;
 
     /* The only difference with .userName */
-    transform: rotate(-90deg)
+    margin: 10%;
+    height: fit-content;
+    writing-mode: vertical-rl;
+    align-items: center;
+    transform: rotate(180deg);
+}
+
+.userNameLeft{
+    composes: userNameRight;
+    transform: rotate(0deg);
+}
+
+.submitButton{
+    composes: genericButton from '../index.css';
+    width: 4%;
+    height: inherit;
+
+    margin: 0.5%;
+    padding: 0%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.utilityIcon{
+    height: 100%;
+    width: 100%;
+    padding: 10%;
+}
+
+.submitButton:hover{
+    transition: 200ms;
+    transform: scale(1.1);
+}
+
+.submitButton:active{
+    transition: 200ms;
+    background-color: var(--secondary-color-hover);
+}
+
+.arrangeButton{
+    composes: submitButton;
 }

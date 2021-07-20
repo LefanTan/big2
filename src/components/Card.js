@@ -1,4 +1,4 @@
-import { GetCardImage } from '../services/CardImageHelper';
+import { getCardImage } from '../services/Helpers';
 import styles from './Card.module.css';
 
 /* PROPS:
@@ -6,9 +6,6 @@ cardType
 cardClickedHandler
 */
 export default function Card(props){
-        
-
-
     var cardButtonStyle = {
         position: 'absolute',
         left: `${props.left}%`,
@@ -23,7 +20,7 @@ export default function Card(props){
 
     return(
         <button style={cardButtonStyle} onClick={() => props.cardClickedHandler(props.cardType)}> 
-            <img className={props.height !== 'auto' ? styles.cardImageVertical : styles.cardImage} src={GetCardImage(props.cardType)} alt='card'/>
+            <img className={props.height !== 'auto' ? styles.cardImageVertical : styles.cardImage} src={getCardImage(props.cardType)} alt='card'/>
         </button>
     )
 }

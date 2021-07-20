@@ -38,17 +38,23 @@ export default function LobbyPage(){
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
         query.once('value', snap => {
             if(snap.exists()){
+                if(snap.val()[lobbyCode]['started'] === true){
+                    setErrorMsg('Game already started')
+                    return
+                }
+
                 let playerList = snap.val()[lobbyCode]['players']
 
-                //TODO: Display proper error here on UI
                 if(playerList.length >= 4){
                     setErrorMsg("Lobby full")
+                    return
                 }
 
                 const playerReadRef = roomReadRef.child(`${lobbyCode}`).child('players')
                 playerReadRef.push({
                     name: playerName,
-                    ready: false
+                    ready: false,
+                    host: false
                 }).then(history.push({
                     pathname: process.env.REACT_APP_GAMEPAGE_URL,
                     search: `?code=${lobbyCode}&name=${playerName}`
@@ -90,13 +96,17 @@ export default function LobbyPage(){
         })
 
         const roomWriteRef = db.ref().child(`Lobbies/${lobbyCode}`)
+        // Create the lobby
         roomWriteRef.set({
             id: lobbyCode,
             started: false
         })
+
+        // Add local player
         roomWriteRef.child('players').push({
             name: playerName,
-            ready: false
+            ready: false,
+            host: true
         })
 
         // Redirect to Game Page

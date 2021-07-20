@@ -26,13 +26,16 @@ code {
   border: 0;
   background-color: var(--secondary-color);
   color: var(--main-color);
-  border-radius: 0px;
+  border-radius: 5px;
 
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-style: normal;
 
   font-size: x-large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .genericText{

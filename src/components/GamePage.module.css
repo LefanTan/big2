@@ -30,11 +30,10 @@
   display: flex;
 }
 
-.exitButton{
+.cornerButton{
   background-color: inherit;
   border: 0;
 
-  transform: rotate(180deg);
   width: 40px;
   height: 40px;
 
@@ -46,44 +45,55 @@
   margin: 1px;
 }
 
-.exitButton:hover .exitTooltip {
+.cornerButton:hover .tooltip {
   visibility: visible;
   opacity: 1;
 
   transition: opacity 0.3s;
 }
 
-.exitButton .exitTooltip{
+.cornerButton .tooltip{
   visibility: hidden;
   opacity: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   font-style: normal;
-  transform: rotate(180deg);
 
   margin: 0;
-  padding: 5px;
+  padding: 2px 5px;
 
   position: absolute;
-  bottom: 35px;
-  right: 5px;
+  top: 40px;
 
-  color: var(--secondary-color);
+  background-color: var(--secondary-color);
+  color: var(--main-color);
 
   border-radius: 5px;
 }
 
-.exitIcon{
+.cornerIcon{
   width: inherit;
   height: inherit;
   color: var(--secondary-color);
 }
 
-.exitIcon:hover{
+.cornerIcon:hover{
+  transition: 200ms;
+
   color: var(--secondary-color-hover);
-  transform: translateY(-1px);
+  transform: scale(1.1);
 }
+
+.cornerIcon:active{
+  transition: 200ms;
+  transform: scale(1);
+}
+
 
 .rowContainer{
   display: flex;
@@ -122,7 +132,11 @@
   background-color: var(--secondary-color);
   font-size: xx-large;
   height: fit-content;
+
   margin-bottom: 5px;
+  padding: 0.5% 1.5%;
+
+  border-radius: 7px;
 
   transition: 200ms;
   transform: scale(1);
