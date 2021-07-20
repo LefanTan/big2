@@ -5,6 +5,14 @@
     padding: 0%;
 }
 
+.noPointer{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    background-color: #6a6161;
+    pointer-events: none;
+}
+
 .cardImageVertical{
     margin: 0%;
     padding: 0%;

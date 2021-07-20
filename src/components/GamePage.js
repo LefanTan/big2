@@ -52,6 +52,7 @@ export default function GamePage(){
         })
     }, [lobbyCode])
 
+    // Set up window unload/closed events
     useEffect(() => {
         window.addEventListener('beforeunload', alertUser)
         window.addEventListener('unload', exitClickedHandler)

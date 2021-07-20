@@ -2,7 +2,7 @@ import {useEffect, useState } from "react";
 import styles from './Player.module.css';
 import { db } from "../services/Firebase";
 import { BsFillPersonFill } from 'react-icons/bs'
-import { FaArrowUp, FaArrowsAltH } from 'react-icons/fa';
+import { FaArrowUp, FaArrowsAltH, FaRedo } from 'react-icons/fa';
 import Card from './Card.js';
 
 /* Prop: 
@@ -11,6 +11,7 @@ playerNo = Determines where the player will be showned locally on screen, client
 export default function Player(props){
     const [inputText, setInputText] = useState('')
     const [playerCards, setPlayerCards] = useState([])
+    const [selectedCards, setSelectedCards] = useState([])
 
     var gridRowNumber = 0
     var gridColumnNumber = 0
@@ -53,7 +54,8 @@ export default function Player(props){
         default:
             throw new Error("Invalid Player Number")
     }
-
+    
+    /** STLYES **/
     var playerContainer = {
         gridRowStart: `${gridRowNumber}`,
         gridColumnStart: `${gridColumnNumber}`,
@@ -88,8 +90,13 @@ export default function Player(props){
         marginTop: '0.5%'
     }
 
+    /* CALLBACKS */
+    const onSubmitButtonClicked = (e) => {
+
+    }
+
     const onArrangeButtonClicked = (e) => {
-        
+
     }
 
     const submitHandler = (e) => {
@@ -106,7 +113,11 @@ export default function Player(props){
     }
 
     const cardClickedHandler = (cardType) => {
-        console.log(cardType)
+        // Remove card if selected already
+        if(selectedCards.includes(cardType))
+            setSelectedCards(selectedCards.filter(x => x !== cardType))
+        else
+            setSelectedCards([...selectedCards, cardType])
     }
 
     return(
@@ -115,12 +126,16 @@ export default function Player(props){
                     <BsFillPersonFill style={personImageStyle}/>
                     <p className={props.playerNo < 3 ? styles.userName : (props.playerNo === 4 ? styles.userNameLeft : styles.userNameRight)}>{props.children}</p>
                     {props.playerNo === 1 && 
-                    <button className={styles.submitButton}>
+                    <button className={styles.utilityButton} onClick={onSubmitButtonClicked}>
                         <FaArrowUp className={styles.utilityIcon}/>
                     </button>}
                     {props.playerNo === 1 && 
-                    <button className={styles.arrangeButton} onClick={onArrangeButtonClicked}>
+                    <button className={styles.utilityButton} onClick={onArrangeButtonClicked}>
                         <FaArrowsAltH className={styles.utilityIcon}/>
+                    </button>}
+                    {props.playerNo === 1 && 
+                    <button className={styles.utilityButton} onClick={() => setSelectedCards([])}>
+                        <FaRedo className={styles.utilityIcon}/>
                     </button>}
             </div>
             <div style={cardContainer}>
@@ -156,9 +171,9 @@ export default function Player(props){
                             top = (85.5 / 12) * (index % 13)
                         }else{
                             if(playerCards.length - 1 > 13)
-                                top = (85.5 / (playerCards.length - 14)) * index
+                                top = (85.5 / 12) * index
                             else
-                                top = (85.5 / (playerCards.length - 1)) * index
+                                top = (85.5 / (playerCards.length - 1)) * index    
                         }   
 
                         if(playerCards.length < 13 && index > 13)
@@ -175,7 +190,7 @@ export default function Player(props){
                             top = (85.5 / 12) * (index % 13)
                         }else{
                             if(playerCards.length - 1 > 13)
-                                top = (85.5 / (playerCards.length - 14)) * index
+                                top = (85.5 / 12) * index
                             else
                                 top = (85.5 / (playerCards.length - 1)) * index
                         }   
@@ -183,8 +198,7 @@ export default function Player(props){
                         if(playerCards.length < 13 && index >= 13)
                             top = ((height * 7) - (playerCards.length * height)) / 2 + index * height
                     }
-                    console.log(playerCards.length)
-                    return <Card key={index} left={left} top={top} width={width} height={height} cardClickedHandler={cardClickedHandler} cardType={cardType}/>    
+                    return <Card key={index} clicked={selectedCards.includes(cardType)} left={left} top={top} width={width} height={height} cardClickedHandler={cardClickedHandler} cardType={cardType}/>    
                 })}
             </div>
         </div>

@@ -109,18 +109,18 @@
 }
 
 .playButton{
-    width: 10%;
+    width: 5.5%;
     max-width: 80px;
-    min-width: fit-content;
     height: 40px;
     margin-left: 40%;
 
     composes: genericButton from '../index.css';
-    font-size: auto;
+    font-size: x-larger;
 }
 
 .playButton:hover {
     transition: 200ms;
+    background-color: var(--secondary-color-hover);
     transform: scale(1.1);
 }
 

@@ -30,7 +30,7 @@
     transform: rotate(0deg);
 }
 
-.submitButton{
+.utilityButton{
     composes: genericButton from '../index.css';
     width: 4%;
     height: inherit;
@@ -46,19 +46,15 @@
 .utilityIcon{
     height: 100%;
     width: 100%;
-    padding: 10%;
+    padding: 15%;
 }
 
-.submitButton:hover{
+.utilityButton:hover{
     transition: 200ms;
     transform: scale(1.1);
 }
 
-.submitButton:active{
+.utilityButton:active{
     transition: 200ms;
     background-color: var(--secondary-color-hover);
-}
-
-.arrangeButton{
-    composes: submitButton;
 }
