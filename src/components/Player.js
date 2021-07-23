@@ -10,7 +10,6 @@ import { sortCard } from "../services/Helpers";
 playerNo = Determines where the player will be showned locally on screen, client should always be Player1
 */
 export default function Player(props){
-    const [inputText, setInputText] = useState('')
     const [playerCards, setPlayerCards] = useState([])
     const [selectedCards, setSelectedCards] = useState([])
 

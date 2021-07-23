@@ -16,27 +16,19 @@ export default function Deck (props){
         //         setChatList(Object.values(snap.val()))
         //     }
         // })
-        console.log(props.playerTurnNumber)
-    }, [props.playerTurnNumber])
+    })
 
     const pulseAnimation = keyframes`
-        0%{
-            transform: translate(0)
-        }
-
-        50%{
-            transform: translate(0, 5px)
-        }
-
-        100%{
-            transform: translate(0)
-        }
+        0% {transform: translate(0)}
+        50% {transform: translate(0, -5px)}
+        100% {transform: translate(0)}
     `
     var ArrowDiv = {}
     var arrowIconStyle = {
         color: 'var(--secondary-color)',
-        width: 'auto',
-        height: '70%'
+        width: `${props.playerTurnNumber < 3 ? 'auto' : '32.5%'}`,
+        height: `${props.playerTurnNumber < 3 ? '70%' : 'auto'}`,
+        marginBottom: `${props.playerTurnNumber === 1 ? 2 : 0}%`
     }
     
     var arrowIcon = <BiDownArrow style={arrowIconStyle}/>

@@ -14,9 +14,18 @@ import circleFilled from '../assets/circle-filled.png';
 import { shuffleArray } from '../services/Helpers.js';
 
 export default function GamePage(){
-    const roomReadRef = db.ref().child(`Lobbies`)
     const location = useLocation()
     const history = useHistory()
+
+    const lobbyStrIndex = location.search.indexOf('code=')
+    const nameStrIndex = location.search.indexOf('name=')
+    // Get the lobby code and local player name from the Url
+    const lobbyCode = location.search.substring(lobbyStrIndex + 5, nameStrIndex - 1)
+    const localPlayerName = location.search.substring(nameStrIndex + 5)
+
+    const roomReadRef = db.ref().child(`Lobbies`)
+    const playerTurnQuery = roomReadRef.child(lobbyCode).child('playerTurn')
+    const playerListQuery = roomReadRef.child(lobbyCode).child('players')
 
     // Indicate if this lobby exist, used during loadup
     const [lobbyExist, setLobbyExist] = useState(false)
@@ -30,13 +39,6 @@ export default function GamePage(){
     // A dictionary that contains information of all player
     const [playerObjDict, setPlayerObjDict] = useState([])
 
-    const lobbyStrIndex = location.search.indexOf('code=')
-    const nameStrIndex = location.search.indexOf('name=')
-
-    // Get the lobby code and local player name from the Url
-    const lobbyCode = location.search.substring(lobbyStrIndex + 5, nameStrIndex - 1)
-    const localPlayerName = location.search.substring(nameStrIndex + 5)
-
     var isHost = Object.values(playerObjDict).find(x => x['host'] === true && x['name'] === localPlayerName)
     var playerNameNumberDict = {}
     var initialDeck = cardTypes;
@@ -46,12 +48,10 @@ export default function GamePage(){
     // update player obj dict and playerTurn variable of the database
     useEffect(() => {
         if(lobbyExist){
-            const playerListQuery = roomReadRef.child(lobbyCode).child('players')
             playerListQuery.on('value', snap => {
                 if(snap.exists()) setPlayerObjDict(snap.val())
             })  
-
-            const playerTurnQuery = roomReadRef.child(lobbyCode).child('playerTurn')
+            
             playerTurnQuery.on('value', snap => {
                 if(snap.exists()) setPlayerTurn(snap.val())
             })
@@ -127,8 +127,15 @@ export default function GamePage(){
     }
 
     // When player clicked submit
+    // Change player turn on the server, only change by the host
     const onPlayerSubmitHandler = () => {
-        console.log(isHost)
+        if(playerTurn === localPlayerName){
+            const keys = Object.keys(playerNameNumberDict)
+            const nextNumber = (keys.indexOf(playerTurn) + 1) % keys.length
+    
+            console.log({key: keys[nextNumber], nextNumber, playerTurn: playerTurn, dict: playerNameNumberDict})
+            roomReadRef.child(lobbyCode).update({playerTurn: keys[nextNumber]})
+        }
     }
 
     // Handles when local player exit the game lobby
