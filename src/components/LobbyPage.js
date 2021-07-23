@@ -99,7 +99,8 @@ export default function LobbyPage(){
         // Create the lobby
         roomWriteRef.set({
             id: lobbyCode,
-            started: false
+            started: false,
+            playerTurn: playerName
         })
 
         // Add local player

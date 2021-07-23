@@ -17,6 +17,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: var(--main-color);
 }
 
 .userCorner{
@@ -165,4 +166,5 @@
 .h1{
   composes: genericText from '../index.css';
   font-size: xx-large;
+  color: var(--secondary-color);
 }

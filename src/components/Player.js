@@ -1,9 +1,10 @@
 import {useEffect, useState } from "react";
 import styles from './Player.module.css';
-import { db } from "../services/Firebase";
 import { BsFillPersonFill } from 'react-icons/bs'
-import { FaArrowUp, FaArrowsAltH, FaRedo } from 'react-icons/fa';
+import { FaArrowUp, FaArrowsAltH, FaArrowDown } from 'react-icons/fa';
+import {TiCancel} from 'react-icons/ti';
 import Card from './Card.js';
+import { sortCard } from "../services/Helpers";
 
 /* Prop: 
 playerNo = Determines where the player will be showned locally on screen, client should always be Player1
@@ -91,25 +92,14 @@ export default function Player(props){
     }
 
     /* CALLBACKS */
-    const onSubmitButtonClicked = (e) => {
+    const onSkipButtonClicked = (e) => {
 
     }
 
+    // Rearrange the cards in order
     const onArrangeButtonClicked = (e) => {
-
-    }
-
-    const submitHandler = (e) => {
-        e.preventDefault()
-
-        // TODO: Send text to the deck
-        const deckRef = db.ref().child('Lobbies').child(props.lobbyCode).child('deck')
-        deckRef.push({
-            sender: props.playerData['name'],
-            timestamp: Date.now(),
-            content: inputText
-        })
-        setInputText('')
+        var newCardDeck = [...playerCards].sort(sortCard)
+        setPlayerCards(newCardDeck)
     }
 
     const cardClickedHandler = (cardType) => {
@@ -126,7 +116,7 @@ export default function Player(props){
                     <BsFillPersonFill style={personImageStyle}/>
                     <p className={props.playerNo < 3 ? styles.userName : (props.playerNo === 4 ? styles.userNameLeft : styles.userNameRight)}>{props.children}</p>
                     {props.playerNo === 1 && 
-                    <button className={styles.utilityButton} onClick={onSubmitButtonClicked}>
+                    <button className={styles.utilityButton} onClick={props.onSubmit}>
                         <FaArrowUp className={styles.utilityIcon}/>
                     </button>}
                     {props.playerNo === 1 && 
@@ -134,8 +124,12 @@ export default function Player(props){
                         <FaArrowsAltH className={styles.utilityIcon}/>
                     </button>}
                     {props.playerNo === 1 && 
+                    <button className={styles.utilityButton} onClick={onSkipButtonClicked}>
+                        <TiCancel className={styles.utilityIcon}/>
+                    </button>}
+                    {props.playerNo === 1 && 
                     <button className={styles.utilityButton} onClick={() => setSelectedCards([])}>
-                        <FaRedo className={styles.utilityIcon}/>
+                        <FaArrowDown className={styles.utilityIcon}/>
                     </button>}
             </div>
             <div style={cardContainer}>

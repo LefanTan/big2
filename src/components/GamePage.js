@@ -18,9 +18,16 @@ export default function GamePage(){
     const location = useLocation()
     const history = useHistory()
 
+    // Indicate if this lobby exist, used during loadup
     const [lobbyExist, setLobbyExist] = useState(false)
+    // Indicate if the page data is still being loaded
     const [loading, setLoading] = useState(true)
+    // Indicate if the game has started already
     const [startGame, setStartGame] = useState(false)
+
+    // Indicate which player's turn is it
+    const [playerTurn, setPlayerTurn] = useState('')
+    // A dictionary that contains information of all player
     const [playerObjDict, setPlayerObjDict] = useState([])
 
     const lobbyStrIndex = location.search.indexOf('code=')
@@ -29,17 +36,25 @@ export default function GamePage(){
     // Get the lobby code and local player name from the Url
     const lobbyCode = location.search.substring(lobbyStrIndex + 5, nameStrIndex - 1)
     const localPlayerName = location.search.substring(nameStrIndex + 5)
-    
-    var initialDeck = cardTypes;
-    var startingPlayerNo = 2
 
-    // update player obj dict
+    var isHost = Object.values(playerObjDict).find(x => x['host'] === true && x['name'] === localPlayerName)
+    var playerNameNumberDict = {}
+    var initialDeck = cardTypes;
+    // Used when assigning player No to players 
+    var currentPlayerNo = 2
+
+    // update player obj dict and playerTurn variable of the database
     useEffect(() => {
         if(lobbyExist){
-            const playerListQuery = roomReadRef.child(lobbyCode)
+            const playerListQuery = roomReadRef.child(lobbyCode).child('players')
             playerListQuery.on('value', snap => {
-                if(snap.exists()) {setPlayerObjDict(snap.val()['players'])}
+                if(snap.exists()) setPlayerObjDict(snap.val())
             })  
+
+            const playerTurnQuery = roomReadRef.child(lobbyCode).child('playerTurn')
+            playerTurnQuery.on('value', snap => {
+                if(snap.exists()) setPlayerTurn(snap.val())
+            })
         }
     }, [lobbyExist])
 
@@ -52,20 +67,18 @@ export default function GamePage(){
         })
     }, [lobbyCode])
 
-    // Set up window unload/closed events
-    useEffect(() => {
-        window.addEventListener('beforeunload', alertUser)
-        window.addEventListener('unload', exitClickedHandler)
-        return () => {
-            window.removeEventListener('beforeunload', alertUser)
-            window.removeEventListener('unload', exitClickedHandler)
-        }
-    }) 
+    // // Set up window unload/closed events
+    // useEffect(() => {
+    //     window.addEventListener('beforeunload', alertUser)
+    //     window.addEventListener('unload', exitClickedHandler)
+    //     return () => {
+    //         window.removeEventListener('beforeunload', alertUser)
+    //         window.removeEventListener('unload', exitClickedHandler)
+    //     }
+    // }) 
 
     // Card dealing
     useEffect(() => {
-        var isHost = Object.values(playerObjDict).find(x => x['host'] === true && x['name'] === localPlayerName)
-
         // Deal cards only if everyone is ready, and the person is a host
         if(startGame && isHost){
             shuffleArray(initialDeck)
@@ -78,11 +91,8 @@ export default function GamePage(){
             }
             // Loop through the cards and deal them to player with a slight delay
             for(let i = 0; i < initialDeck.length; i++){
-                console.log(playerObjDict[playerKeys[playerIndex % playerKeys.length]]['name'])
                 const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[playerIndex++ % playerKeys.length]}/cards`)
-                setTimeout(() => {
-                    playerDeckQuery.push({cardType: initialDeck[i]})
-                }, 1000)
+                playerDeckQuery.push({cardType: initialDeck[i]})
             }
         }
     }, [startGame])
@@ -114,6 +124,11 @@ export default function GamePage(){
                 ready: true
             })  
         })
+    }
+
+    // When player clicked submit
+    const onPlayerSubmitHandler = () => {
+        console.log(isHost)
     }
 
     // Handles when local player exit the game lobby
@@ -165,12 +180,15 @@ export default function GamePage(){
                     </button>
                 </div>
 
-                {Object.values(playerObjDict).map((playerObj, index) => {
+                {Object.values(playerObjDict).map((playerObj, index) => { 
                     // Make sure local player gets 1 as assigned number, and everyone else starts from 2
-                    const assignedNumber = playerObj['name'] === localPlayerName ? 1 : startingPlayerNo++
-                    return(<Player key={assignedNumber} playerData={playerObj} playerIndex={index} lobbyCode={lobbyCode} playerNo={assignedNumber}>{playerObj['name']}</Player>)
+                    const assignedNumber = playerObj['name'] === localPlayerName ? 1 : currentPlayerNo++
+                    playerNameNumberDict[playerObj['name']] = assignedNumber
+                    
+                    return(<Player turn={playerObj['name'] === playerTurn} key={assignedNumber} onSubmit={onPlayerSubmitHandler}
+                    playerData={playerObj} playerIndex={index} lobbyCode={lobbyCode} playerNo={assignedNumber}>{playerObj['name']}</Player>)
                 })}
-                <Deck lobbyCode={lobbyCode}/>
+                {startGame && <Deck playerTurnNumber={playerNameNumberDict[playerTurn]} lobbyCode={lobbyCode}/>}
             </div> 
             : <ErrorPage>404 Lobby not found</ErrorPage>
         )

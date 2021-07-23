@@ -3,6 +3,7 @@ import GamePage from './components/GamePage';
 import LobbyPage from './components/LobbyPage'
 import {Switch, Route, HashRouter} from 'react-router-dom'
 import ErrorPage from './components/ErrorPage';
+import React from 'react';
 
 function App() {
   return (
