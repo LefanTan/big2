@@ -140,12 +140,13 @@
 
 .button:hover {
     transition: 200ms;
+    transform: scale(1.05);
     background-color: var(--secondary-color-hover);
 }
 
 .button:active {
     transition: 200ms;
-    transform: scale(0.96);
+    transform: scale(1);
 }
 
 .p{

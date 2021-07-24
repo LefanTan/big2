@@ -43,8 +43,8 @@ export default function Card(props){
     }
 
     return(
-        <button style={cardButtonStyle} onClick={() => !props.cardType.includes('back') && props.cardClickedHandler(props.cardType)}>
-            <img style={hovered && !props.cardType.includes('back') ? (active ? activeImgStyle : hoveredImgStyle) : imgStyle} 
+        <button style={cardButtonStyle} onClick={() => props.clickable && props.cardClickedHandler(props.cardType)}>
+            <img style={hovered && props.clickable ? (active ? activeImgStyle : hoveredImgStyle) : imgStyle} 
             onMouseDown={toggleActive} onMouseUp={toggleActive} onMouseEnter={toggleHovered} onMouseLeave={toggleHovered} src={getCardImage(props.cardType)} alt='card'/>
         </button>
     )

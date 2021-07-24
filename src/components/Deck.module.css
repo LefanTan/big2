@@ -9,3 +9,39 @@
     grid-template-rows: 10% 80% 10%;
     grid-template-columns: 10% 80% 10%;
 }
+
+.DeckContainer{
+    grid-row: 2;
+    grid-column: 2;
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    padding: 1.5%;
+    position: relative;
+}
+
+.h3{
+    composes: genericText from '../index.css';
+    color: var(--main-color);
+    background-color: var(--secondary-color);
+    padding: 0.5% 1%;
+    border-radius: 5px;
+
+    position: absolute;
+    top: 5%;
+}
+
+.p{
+    composes: genericText from '../index.css';
+    color: var(--secondary-color);
+    font-size: small;
+    padding: 0.5% 1%;
+    border-radius: 5px;
+
+    position: absolute;
+    bottom: 5%;
+}

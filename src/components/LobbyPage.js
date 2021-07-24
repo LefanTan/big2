@@ -110,6 +110,13 @@ export default function LobbyPage(){
             host: true
         })
 
+        // MOCK PLAYER
+        roomWriteRef.child('players').push({
+            name: 'player2',
+            ready: true,
+            host: false,
+        })
+
         // Redirect to Game Page
         history.push({
             pathname: process.env.REACT_APP_GAMEPAGE_URL,
