@@ -103,6 +103,15 @@ export default function LobbyPage(){
             playerTurn: playerName
         })
 
+        // Create an empty deck
+        roomWriteRef.child('deck').set({
+            cards: '',
+            deckType: '',
+            largestCardInDeck: '',
+            emoji: '',
+            placedBy: ''
+        })
+
         // Add local player
         roomWriteRef.child('players').push({
             name: playerName,
@@ -110,12 +119,12 @@ export default function LobbyPage(){
             host: true
         })
 
-        // MOCK PLAYER
-        roomWriteRef.child('players').push({
-            name: 'player2',
-            ready: true,
-            host: false,
-        })
+        // // MOCK PLAYER
+        // roomWriteRef.child('players').push({
+        //     name: 'player2',
+        //     ready: true,
+        //     host: false,
+        // })
 
         // Redirect to Game Page
         history.push({

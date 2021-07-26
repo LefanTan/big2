@@ -21,7 +21,7 @@ export default function Player(props){
     useEffect(() => {
         if(props.playerData['cards']){
             var cardObjectArray = Object.values(props.playerData['cards'])
-            setPlayerCards(cardObjectArray.map(obj => obj['cardType']))
+            setPlayerCards((cardObjectArray.map(obj => obj['cardType']).sort(sortCard)))
         }
     }, [props.playerData])
 
@@ -91,9 +91,6 @@ export default function Player(props){
     }
 
     /* CALLBACKS */
-    const onSkipButtonClicked = (e) => {
-
-    }
 
     // Rearrange the cards in order
     const onArrangeButtonClicked = (e) => {
@@ -115,15 +112,19 @@ export default function Player(props){
                     <BsFillPersonFill style={personImageStyle}/>
                     <p className={props.playerNo < 3 ? styles.userName : (props.playerNo === 4 ? styles.userNameLeft : styles.userNameRight)}>{props.children}</p>
                     {props.playerNo === 1 && 
-                    <button className={styles.utilityButton} onClick={props.onSubmit}>
+                    <button className={styles.utilityButton} onClick={() => 
+                    {
+                        props.onSubmit(selectedCards) 
+                        setSelectedCards([])
+                    }}>
                         <FaArrowUp className={styles.utilityIcon}/>
                     </button>}
-                    {props.playerNo === 1 && 
+                    {/* {props.playerNo === 1 && 
                     <button className={styles.utilityButton} onClick={onArrangeButtonClicked}>
                         <FaArrowsAltH className={styles.utilityIcon}/>
-                    </button>}
+                    </button>} */}
                     {props.playerNo === 1 && 
-                    <button className={styles.utilityButton} onClick={onSkipButtonClicked}>
+                    <button className={styles.utilityButton} onClick={() => props.onSkip()}>
                         <TiCancel className={styles.utilityIcon}/>
                     </button>}
                     {props.playerNo === 1 && 

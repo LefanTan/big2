@@ -11,7 +11,7 @@ import ErrorPage from './ErrorPage.js';
 import cardTypes from '../data structure/deck.json';
 import circle from '../assets/circle.png';
 import circleFilled from '../assets/circle-filled.png';
-import { shuffleArray } from '../services/Helpers.js';
+import { shuffleArray, getCardType, sortCard, biggerOrEqualCombo } from '../services/Helpers.js';
 
 export default function GamePage(){
     const location = useLocation()
@@ -25,6 +25,7 @@ export default function GamePage(){
 
     const roomReadRef = db.ref().child(`Lobbies`)
     const playerTurnQuery = roomReadRef.child(lobbyCode).child('playerTurn')
+    const deckQuery = roomReadRef.child(lobbyCode).child('deck')
     const playerListQuery = roomReadRef.child(lobbyCode).child('players')
 
     // Indicate if this lobby exist, used during loadup
@@ -34,6 +35,8 @@ export default function GamePage(){
     // Indicate if the game has started already
     const [startGame, setStartGame] = useState(false)
 
+    // Text displayed when submition of cards is not successful
+    const [submitError, setSubmitError] = useState('')
     // Indicate which player's turn is it
     const [playerTurn, setPlayerTurn] = useState('')
     // A dictionary that contains information of all player
@@ -92,7 +95,10 @@ export default function GamePage(){
             // Loop through the cards and deal them to player with a slight delay
             for(let i = 0; i < initialDeck.length; i++){
                 const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[playerIndex++ % playerKeys.length]}/cards`)
+                // const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[0]}/cards`)
                 playerDeckQuery.push({cardType: initialDeck[i]})
+
+                if(initialDeck[i] === '03D') roomReadRef.child(lobbyCode).update({playerTurn: playerObjDict[playerKeys[(playerIndex - 1) % playerKeys.length]]['name']})
             }
         }
     }, [startGame])
@@ -128,13 +134,94 @@ export default function GamePage(){
 
     // When player clicked submit
     // Change player turn on the server, only change by the host
-    const onPlayerSubmitHandler = () => {
+    // PARAM: cards: array 
+    //        type: string
+    const onPlayerSubmitHandler = (cards) => {
+        if(cards.length === 0) 
+            return
+
         if(playerTurn === localPlayerName){
+            var deckType = ''
+            var largestCardInDeck = ''
+
+            deckQuery.once('value', snap => {
+                if(snap.exists()){
+                    deckType = snap.val()['deckType']
+                    largestCardInDeck = snap.val()['largestCardInDeck']
+
+                    var info = getCardType(cards)
+                    // Update deck
+                    // Check if cards submitted is valid (bigger than the cards played in the deck, valid combo)
+                    if(info[1] === -1){
+                        return
+                    }else if(deckType === '' || biggerOrEqualCombo(info[0], deckType)){
+                        if(info[0] === deckType){ // If same combo, check for largest card in deck
+                            if(sortCard(info[1], largestCardInDeck) > 0)
+                                deckQuery.set({
+                                    cards: cards,
+                                    deckType: info[0],
+                                    largestCardInDeck: info[1],
+                                    emoji: info[2],
+                                    placedBy: localPlayerName
+                                })
+                            else{ // same combo, smaller value
+                                setSubmitError('Invalid Cards')
+                                return
+                            } 
+                        }else // cards is bigger than deck's cards
+                            deckQuery.set({
+                                cards: cards,
+                                deckType: info[0],
+                                largestCardInDeck: info[1],
+                                emoji: info[2],
+                                placedBy: localPlayerName
+                            })
+                    }else{ // Cards submitted is imcompatible with deck
+                        setSubmitError('Invalid Cards')
+                        return
+                    }
+
+                    // Remove cards from player's deck
+                    var playerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
+                    cards.forEach(card => {
+                        let cardKey = Object.keys(playerObjDict[playerKey]['cards']).find(key => playerObjDict[playerKey]['cards'][key].cardType === card)
+                        playerListQuery.child(`${playerKey}/cards/${cardKey}`).remove()
+                    })
+
+                    // If player's deck is empty, WIN!
+
+                    // Update player Turn
+                    const keys = Object.keys(playerNameNumberDict)
+                    const nextNumber = (keys.indexOf(playerTurn) + 1) % keys.length
+                    roomReadRef.child(lobbyCode).update({playerTurn: keys[nextNumber]})
+
+                    setSubmitError('')
+                }
+            })
+        }else{
+            setSubmitError("It's not your turn yet, I beg you to patiently wait")
+        }
+    }
+
+    const onPlayerSkipHandler = () => {
+        if(playerTurn === localPlayerName){
+            // Update player Turn
             const keys = Object.keys(playerNameNumberDict)
             const nextNumber = (keys.indexOf(playerTurn) + 1) % keys.length
-    
-            console.log({key: keys[nextNumber], nextNumber, playerTurn: playerTurn, dict: playerNameNumberDict})
             roomReadRef.child(lobbyCode).update({playerTurn: keys[nextNumber]})
+
+            // If the next player is the person that last placed the card, refresh the deck info
+            const deckQuery = roomReadRef.child(`${lobbyCode}/deck`)
+            deckQuery.once('value', snap => {
+                if(snap.val()['placedBy'] === keys[nextNumber]){
+                    deckQuery.update({
+                        deckType: '',
+                        largestCardInDeck: '',
+                        emoji: '',
+                        placedBy: ''
+                    })
+                }
+            })
         }
     }
 
@@ -192,10 +279,14 @@ export default function GamePage(){
                     const assignedNumber = playerObj['name'] === localPlayerName ? 1 : currentPlayerNo++
                     playerNameNumberDict[playerObj['name']] = assignedNumber
                     
-                    return(<Player turn={playerObj['name'] === playerTurn} key={assignedNumber} onSubmit={onPlayerSubmitHandler}
+                    return(<Player turn={playerObj['name'] === playerTurn} key={assignedNumber} onSubmit={onPlayerSubmitHandler} onSkip={onPlayerSkipHandler}
                     playerData={playerObj} playerIndex={index} lobbyCode={lobbyCode} playerNo={assignedNumber}>{playerObj['name']}</Player>)
                 })}
                 {startGame && <Deck playerTurnNumber={playerNameNumberDict[playerTurn]} lobbyCode={lobbyCode}/>}
+                {submitError !== '' && 
+                <div className={styles.submitInfoContainer}>
+                    <h1 className={styles.submitInfoText}>{submitError}</h1>
+                </div>}
             </div> 
             : <ErrorPage>404 Lobby not found</ErrorPage>
         )

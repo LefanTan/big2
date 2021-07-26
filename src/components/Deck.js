@@ -8,21 +8,18 @@ import { useEffect, useState } from 'react'
 
 export default function Deck (props){
     const [cardList, setCardList] = useState([])
+    const [deck, setDeck] = useState()
 
     // Connect deck to firebase
     useEffect(() => {
-        // const deckRef = db.ref().child('Lobbies').child(props.lobbyCode).child('deck')
-        // deckRef.on('value', snap => {
-        //     if(snap.exists()) setCardList(Object.values(snap.val()))
-        // })
-
-        setCardList(['0AD', '02S', '02L', '03D', '03L'])
+        const deckRef = db.ref().child('Lobbies').child(props.lobbyCode).child('deck')
+        deckRef.on('value', snap => {
+            if(snap.exists()){
+                if(snap.val()['cards'] !== '') setCardList(snap.val()['cards'])
+                setDeck(snap.val())
+            } 
+        })
     },[])
-
-    // When card deck on firebase changes, update the UI to reflect
-    // useEffect(() => {
-
-    // }, [cardList])
 
     // STYLES
     const pulseAnimation = keyframes`
@@ -111,8 +108,8 @@ export default function Deck (props){
             {props.playerTurnNumber && <ArrowDiv>{arrowIcon}</ArrowDiv>}
             <div className={styles.DeckContainer}>
                 {cardList.length > 0 && cardList.map((cardType, index) => <Card key={cardType} width='15' left={(100 - cardList.length * 15) / 2 + index * 15} cardType={cardType}/>)}
-                <h3 className={styles.h3}>FULL SUIT ( ͡ᵔ ͜ʖ ͡ᵔ)</h3>
-                <p className={styles.p}>Played By: Sally</p>
+                {(deck && deck['deckType'] !== '') && <h3 className={styles.h3}>{deck['deckType'].toUpperCase()} {deck['emoji']}</h3>}
+                {(deck && deck['placedBy'] !== '') && <p className={styles.p}>Placed By: {deck['placedBy']}</p>}
             </div>
         </div>
     )
