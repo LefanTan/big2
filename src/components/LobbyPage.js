@@ -100,7 +100,9 @@ export default function LobbyPage(){
         roomWriteRef.set({
             id: lobbyCode,
             started: false,
-            playerTurn: playerName
+            gameEnded: false,
+            playerTurn: playerName,
+            prevWinner: ''
         })
 
         // Create an empty deck
@@ -118,13 +120,6 @@ export default function LobbyPage(){
             ready: false,
             host: true
         })
-
-        // // MOCK PLAYER
-        // roomWriteRef.child('players').push({
-        //     name: 'player2',
-        //     ready: true,
-        //     host: false,
-        // })
 
         // Redirect to Game Page
         history.push({

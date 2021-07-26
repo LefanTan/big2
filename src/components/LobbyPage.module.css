@@ -109,8 +109,7 @@
 }
 
 .playButton{
-    width: 5.5%;
-    max-width: 80px;
+    width: fit-content;
     height: 40px;
     margin-left: 40%;
 

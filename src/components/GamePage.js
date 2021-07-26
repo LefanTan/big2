@@ -12,6 +12,7 @@ import cardTypes from '../data structure/deck.json';
 import circle from '../assets/circle.png';
 import circleFilled from '../assets/circle-filled.png';
 import { shuffleArray, getCardType, sortCard, biggerOrEqualCombo } from '../services/Helpers.js';
+import { typeOf } from 'react-is';
 
 export default function GamePage(){
     const location = useLocation()
@@ -34,6 +35,10 @@ export default function GamePage(){
     const [loading, setLoading] = useState(true)
     // Indicate if the game has started already
     const [startGame, setStartGame] = useState(false)
+    // Indicate if someone wins the game
+    const [gameEnded, setGameEnded] = useState(false)
+    // Indicate the previous winner
+    const [prevWinner, setPrevWinner] = useState(false)
 
     // Text displayed when submition of cards is not successful
     const [submitError, setSubmitError] = useState('')
@@ -41,7 +46,8 @@ export default function GamePage(){
     const [playerTurn, setPlayerTurn] = useState('')
     // A dictionary that contains information of all player
     const [playerObjDict, setPlayerObjDict] = useState([])
-
+    
+    var localPlayerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
     var isHost = Object.values(playerObjDict).find(x => x['host'] === true && x['name'] === localPlayerName)
     var playerNameNumberDict = {}
     var initialDeck = cardTypes;
@@ -57,6 +63,14 @@ export default function GamePage(){
             
             playerTurnQuery.on('value', snap => {
                 if(snap.exists()) setPlayerTurn(snap.val())
+            })
+
+            roomReadRef.child(`${lobbyCode}`).on('value', snap => {
+                if(snap.exists()){
+                    setStartGame(snap.val()['started'])
+                    setGameEnded(snap.val()['gameEnded'])
+                    setPrevWinner(snap.val()['prevWinner'])
+                }
             })
         }
     }, [lobbyExist])
@@ -104,14 +118,40 @@ export default function GamePage(){
     }, [startGame])
 
     useEffect(() => {
+        localPlayerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
+
         // Make sure the ready words and buttons doesn't dissapear too suddently
-        setTimeout(() => {
-            // Only allow game to start if all player click ready, if only 1 player, clicking ready won't start
-            if(Object.keys(playerObjDict).length > 1 && typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') {
-                roomReadRef.child(`${lobbyCode}`).update({started: true})
-                setStartGame(true)
+        if(!startGame){
+            setTimeout(() => {
+                // Only allow game to start if all player click ready, if only 1 player, clicking ready won't start
+                if(Object.keys(playerObjDict).length > 1 && typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') {
+                    roomReadRef.child(`${lobbyCode}`).update({started: true})
+                }
+            }, 1000);
+        }else{
+            if(gameEnded){
+                roomReadRef.child(`${lobbyCode}`).update({
+                    started: false,
+                    gameEnded: false
+                })
+
+                roomReadRef.child(`${lobbyCode}`).child('deck').set({
+                    cards: '',
+                    deckType: '',
+                    largestCardInDeck: '',
+                    emoji: '',
+                    placedBy: ''
+                })
+
+                Object.keys(playerObjDict).forEach((playerKey) => {
+                    playerListQuery.child(`${playerKey}`).update({
+                        cards: '',
+                        ready: false
+                    })
+                })
             }
-        }, 1000);
+        }
+
     }, [playerObjDict])
 
 
@@ -121,8 +161,7 @@ export default function GamePage(){
     }
 
     const playerReadyHandler = () => {
-        const playerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
-        const playerQuery = roomReadRef.child(lobbyCode).child(`/players/${playerKey}`)
+        const playerQuery = roomReadRef.child(lobbyCode).child(`/players/${localPlayerKey}`)
 
         playerQuery.once('value', snap => {
             playerQuery.set({
@@ -153,6 +192,7 @@ export default function GamePage(){
                     // Update deck
                     // Check if cards submitted is valid (bigger than the cards played in the deck, valid combo)
                     if(info[1] === -1){
+                        setSubmitError('Invalid Cards')
                         return
                     }else if(deckType === '' || biggerOrEqualCombo(info[0], deckType)){
                         if(info[0] === deckType){ // If same combo, check for largest card in deck
@@ -182,13 +222,17 @@ export default function GamePage(){
                     }
 
                     // Remove cards from player's deck
-                    var playerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
                     cards.forEach(card => {
-                        let cardKey = Object.keys(playerObjDict[playerKey]['cards']).find(key => playerObjDict[playerKey]['cards'][key].cardType === card)
-                        playerListQuery.child(`${playerKey}/cards/${cardKey}`).remove()
+                        let cardKey = Object.keys(playerObjDict[localPlayerKey]['cards']).find(key => playerObjDict[localPlayerKey]['cards'][key].cardType === card)
+                        playerListQuery.child(`${localPlayerKey}/cards/${cardKey}`).remove()
                     })
 
-                    // If player's deck is empty, WIN!
+                    if(Object.keys(playerObjDict[localPlayerKey]['cards']).length - cards.length === 0){
+                        roomReadRef.child(`${lobbyCode}`).update({
+                            gameEnded: true,
+                            prevWinner: localPlayerName
+                        })
+                    }
 
                     // Update player Turn
                     const keys = Object.keys(playerNameNumberDict)
@@ -254,10 +298,11 @@ export default function GamePage(){
             <div className={styles.Container}>
                 {!startGame &&
                     <div className={styles.playerReadyContainer}>
+                        {prevWinner !== '' && <p className={styles.submitInfoText}>CONGRATUALTIONS, WINNER IS {prevWinner}!!!ヽ(•‿•)ノ</p>}
                         <div className={styles.rowContainer}>
                             {Object.values(playerObjDict).map(player =>  <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button'/> )}
                         </div>
-                        <button className={styles.playButton} onClick={playerReadyHandler}>Ready!</button> 
+                        <button className={styles.playButton} onClick={playerReadyHandler}>{`${prevWinner === '' ? 'Ready?' : 'Go again?'}`}</button> 
                         <p className={styles.words}>{typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined' && Object.keys(playerObjDict).length === 1 
                         ? 'Hmmmm, the game needs more than 1 player to start ¯\\_( ͡❛ ͜ʖ ͡❛)_/¯' : "only click if you're actually ready, of course ☉_☉" }</p>
                     </div>

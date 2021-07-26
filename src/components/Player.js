@@ -19,10 +19,11 @@ export default function Player(props){
     var gridTemplateColumns = 0
 
     useEffect(() => {
-        if(props.playerData['cards']){
+        if('cards' in props.playerData){
             var cardObjectArray = Object.values(props.playerData['cards'])
             setPlayerCards((cardObjectArray.map(obj => obj['cardType']).sort(sortCard)))
-        }
+        }else
+            setPlayerCards([])
     }, [props.playerData])
 
     // Update gridRowNumber and gridColumnNumber based on local player number
