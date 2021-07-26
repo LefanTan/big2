@@ -1,5 +1,3 @@
-import { BiCaretDownSquare } from "react-icons/bi";
-
 export function getCardImage(cardType){
     const images = require.context('../assets/cards/', true)
 

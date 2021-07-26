@@ -182,7 +182,7 @@
 
 .submitInfoText{
   composes: genericText from '../index.css';
-  font-size: auto;
+  font-size: large;
   background-color: var(--secondary-color);
   color: var(--main-color);
 

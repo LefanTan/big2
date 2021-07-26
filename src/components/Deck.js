@@ -22,11 +22,17 @@ export default function Deck (props){
     },[])
 
     // STYLES
-    const pulseAnimation = keyframes`
+    const pulseAnimationVertical = keyframes`
         0% {transform: translate(0)}
         50% {transform: translate(0, 5px)}
         100% {transform: translate(0)}
     `
+    const pulseAnimationHorizontal = keyframes`
+        0% {transform: translate(0)}
+        50% {transform: translate(5px, 0)}
+        100% {transform: translate(0)}
+    `
+
     var ArrowDiv = {}
     var arrowIconStyle = {
         color: 'var(--secondary-color)',
@@ -49,7 +55,7 @@ export default function Deck (props){
                 height: auto;
                 grid-row-start: 3;
                 grid-column: 2;
-                animation: ${pulseAnimation} 1.5s ease-in-out;
+                animation: ${pulseAnimationVertical} 1.5s ease-in-out;
                 animation-iteration-count: infinite;
             `
             arrowIcon = <BiDownArrow style={arrowIconStyle}/>
@@ -64,7 +70,7 @@ export default function Deck (props){
                 height: auto;
                 grid-row-start: 1;
                 grid-column: 2;
-                animation: ${pulseAnimation} 1.5s ease-in-out;
+                animation: ${pulseAnimationVertical} 1.5s ease-in-out;
                 animation-iteration-count: infinite;
             `
             arrowIcon = <BiUpArrow style={arrowIconStyle}/>
@@ -74,12 +80,12 @@ export default function Deck (props){
                 display: flex;
                 justify-content: center;
                 align-items: center;
-
+                
                 width: 100%;
                 height: auto;
                 grid-row: 2;
-                grid-column-start: 4;
-                animation: ${pulseAnimation} 1.5s ease-in-out;
+                grid-column-start: 3;
+                animation: ${pulseAnimationHorizontal} 1.5s ease-in-out;
                 animation-iteration-count: infinite;
             `
             arrowIcon = <BiRightArrow style={arrowIconStyle}/>
@@ -94,7 +100,7 @@ export default function Deck (props){
                 height: auto;
                 grid-row: 2;
                 grid-column-start: 1;
-                animation: ${pulseAnimation} 1.5s ease-in-out;
+                animation: ${pulseAnimationHorizontal} 1.5s ease-in-out;
                 animation-iteration-count: infinite;
             `
             arrowIcon = <BiLeftArrow style={arrowIconStyle}/>
