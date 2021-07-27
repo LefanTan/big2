@@ -1,0 +1,25 @@
+@import '../index.css';
+
+.Container{
+    width: 100vw;
+    height: 100vh;
+
+    background-color: var(--main-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.moanImg{
+    width: 50%;
+}
+
+.h1{
+    composes: genericText from '../index.css';
+    color: var(--secondary-color);
+    font-weight: 400;
+    font-size: large;
+
+    width: 80%;
+}

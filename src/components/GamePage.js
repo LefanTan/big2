@@ -43,7 +43,7 @@ export default function GamePage(){
     // Indicate the previous winner
     const [prevWinner, setPrevWinner] = useState(false)
     // Indicate if the user info popup menu should appear
-    const [infoTrigger, setInfoTrigger] = useState(true)
+    const [infoTrigger, setInfoTrigger] = useState(false)
     // Indicate the page of the user info popup
     const [userInfoPage, setUserInfoPage] = useState(1)
 
@@ -91,15 +91,15 @@ export default function GamePage(){
         })
     }, [lobbyCode])
 
-    // // Set up window unload/closed events
-    // useEffect(() => {
-    //     window.addEventListener('beforeunload', alertUser)
-    //     window.addEventListener('unload', exitClickedHandler)
-    //     return () => {
-    //         window.removeEventListener('beforeunload', alertUser)
-    //         window.removeEventListener('unload', exitClickedHandler)
-    //     }
-    // }) 
+    // Set up window unload/closed events
+    useEffect(() => {
+        window.addEventListener('beforeunload', alertUser)
+        window.addEventListener('unload', exitClickedHandler)
+        return () => {
+            window.removeEventListener('beforeunload', alertUser)
+            window.removeEventListener('unload', exitClickedHandler)
+        }
+    }) 
 
     // Card dealing
     useEffect(() => {
@@ -250,7 +250,7 @@ export default function GamePage(){
                 }
             })
         }else{
-            setSubmitError("It's not your turn yet, I beg you to patiently wait")
+            setSubmitError("It's not your turn yet, I beg you to patiently wait 😩")
         }
     }
 

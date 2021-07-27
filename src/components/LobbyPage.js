@@ -20,6 +20,7 @@ export default function LobbyPage(){
             setErrorMsg('Please enter a name')
             return false
         }
+        // eslint-disable-next-line no-useless-escape
         const specialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/
         if(specialChar.test(playerName)){
             setErrorMsg('No special characters or spaces allowed for Player Name')

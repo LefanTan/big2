@@ -1,8 +1,8 @@
 @import '../index.css';
 
 .Container{
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 
   background-color: var(--main-color);
   display: grid;
@@ -66,6 +66,16 @@
   margin: 1px;
 }
 
+.cornerButton:hover{
+  transition: 200ms;
+  color: var(--secondary-color-hover);
+}
+
+.cornerButton:hover{
+  transition: 200ms;
+  color: var(--secondary-color-hover);
+}
+
 .cornerButton:hover .tooltip {
   visibility: visible;
   opacity: 1;
@@ -80,6 +90,18 @@
 
   right: 0px;
   bottom: 0px;
+}
+
+.pageButton:hover{
+  transition: 200ms;
+  color: var(--main-color-hover);
+  transform: scale(1.1);
+}
+
+.pageButton:hover{
+  transition: 200ms;
+  color: var(--main-color-hover);
+  transform: scale(1);
 }
 
 .cornerButton .tooltip{
@@ -113,14 +135,13 @@
 
 .cornerIcon:hover{
   transition: 200ms;
-  transform: scale(1.15);
+  transform: scale(1.1);
 }
 
 .cornerIcon:active{
   transition: 200ms;
   transform: scale(1);
 }
-
 
 .rowContainer{
   display: flex;
@@ -207,7 +228,7 @@
   background-color: var(--secondary-color);
   color: var(--main-color);
 
-  padding: 1% 2%;
+  padding: 1% 3%;
   border-radius: 5px;
 }
 

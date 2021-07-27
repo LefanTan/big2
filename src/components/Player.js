@@ -1,7 +1,7 @@
 import {useEffect, useState } from "react";
 import styles from './Player.module.css';
 import { BsFillPersonFill } from 'react-icons/bs'
-import { FaArrowUp, FaArrowsAltH, FaArrowDown } from 'react-icons/fa';
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 import {TiCancel} from 'react-icons/ti';
 import Card from './Card.js';
 import { sortCard } from "../services/Helpers";
