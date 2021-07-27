@@ -15,11 +15,17 @@ export default function LobbyPage(){
     const roomReadRef = db.ref().child(`Lobbies`)
 
     // Check if player name field is filled, if not, show an alert and return false
-    const playerNameFilled = () => {
+    const playerNameCheck = () => {
         if(playerName.length === 0){
             setErrorMsg('Please enter a name')
             return false
         }
+        const specialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/
+        if(specialChar.test(playerName)){
+            setErrorMsg('No special characters or spaces allowed for Player Name')
+            return false
+        }
+
         return true
     }
 
@@ -27,7 +33,7 @@ export default function LobbyPage(){
     const lobbyEnterHandler = (e) => {
         e.preventDefault()
 
-        if(!playerNameFilled())
+        if(!playerNameCheck())
             return
 
         if(lobbyCode === ''){
@@ -81,7 +87,7 @@ export default function LobbyPage(){
     const lobbyCreateHandler = (e) => {
         e.preventDefault()
 
-        if(!playerNameFilled())
+        if(!playerNameCheck())
             return
         
         // Generate 4 letter code
@@ -121,17 +127,17 @@ export default function LobbyPage(){
             host: true
         })
 
-        // MOCK PLAYERS
-        roomWriteRef.child('players').push({
-            name: 'player2',
-            ready: true,
-            host: false,
-        })
-        roomWriteRef.child('players').push({
-            name: 'player3',
-            ready: true,
-            host: false,
-        })
+        // // MOCK PLAYERS
+        // roomWriteRef.child('players').push({
+        //     name: 'player2',
+        //     ready: true,
+        //     host: false,
+        // })
+        // roomWriteRef.child('players').push({
+        //     name: 'player3',
+        //     ready: true,
+        //     host: false,
+        // })
 
         // Redirect to Game Page
         history.push({

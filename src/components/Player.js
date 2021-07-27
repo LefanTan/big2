@@ -87,17 +87,10 @@ export default function Player(props){
     var personImageStyle = {
         color: 'var(--secondary-color)',
         height: 'fit-content',
-        transform: `${props.playerNo < 3 ? '' : `rotate(${props.playerNo === 3 ? -90 : 90}deg)`}`,
-        marginTop: '0.5%'
+        transform: `${props.playerNo < 3 ? '' : `rotate(${props.playerNo === 3 ? -90 : 90}deg)`}`
     }
 
     /* CALLBACKS */
-
-    // Rearrange the cards in order
-    const onArrangeButtonClicked = (e) => {
-        var newCardDeck = [...playerCards].sort(sortCard)
-        setPlayerCards(newCardDeck)
-    }
 
     const cardClickedHandler = (cardType) => {
         // Remove card if selected already
@@ -120,10 +113,6 @@ export default function Player(props){
                     }}>
                         <FaArrowUp className={styles.utilityIcon}/>
                     </button>}
-                    {/* {props.playerNo === 1 && 
-                    <button className={styles.utilityButton} onClick={onArrangeButtonClicked}>
-                        <FaArrowsAltH className={styles.utilityIcon}/>
-                    </button>} */}
                     {props.playerNo === 1 && 
                     <button className={styles.utilityButton} onClick={() => props.onSkip()}>
                         <TiCancel className={styles.utilityIcon}/>

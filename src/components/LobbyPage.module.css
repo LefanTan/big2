@@ -162,6 +162,7 @@
     background-color: var(--secondary-color);
 
     margin-top: 20px;
+    margin-right: 30px;
     padding: 5px 15px;
     border-radius: 5px;
 }

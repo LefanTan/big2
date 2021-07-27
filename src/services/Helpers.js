@@ -78,7 +78,7 @@ export function getCardType(cards){
         let firstSuit = sortedCards[0].slice(2)
 
         // FLUSHES, ROYAL AND STRAIGHT FLUSHES
-        if(sortedCards.every((card) => {
+        if(sortedCards.every((card) => { // True if all suit is same
             return card.slice(2) === firstSuit
         })){
             // If all cards are bigger than the next one by one, it is a straight flush
@@ -91,7 +91,7 @@ export function getCardType(cards){
                 }
                 return false
             })){
-                if(sortedCards[0] === '0AS') // If biggest card starts with A spade, it is a royal flush
+                if(sortedCards[0].slice(0, 2) === '0A') // If biggest card starts with A, it is a royal flush
                     return ['royal flush', sortedCards[0], '✧･ﾟ:*( ͡ꈍ ͜ʖ̫ ͡ꈍ )*:･ﾟ✧']
 
                 return ['straight flush', sortedCards[0], '( ͡° ͜ʖ ͡°)_╭∩╮']

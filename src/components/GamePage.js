@@ -7,12 +7,15 @@ import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
 import { IoIosInformationCircle } from 'react-icons/io'
+import { BiRightArrowAlt, BiLeftArrowAlt } from 'react-icons/bi';
 import ErrorPage from './ErrorPage.js';
 import cardTypes from '../data structure/deck.json';
 import circle from '../assets/circle.png';
+import userInfo from '../assets/user-info.png';
+import userInfo2 from '../assets/user-info2.png';
 import circleFilled from '../assets/circle-filled.png';
 import { shuffleArray, getCardType, sortCard, biggerOrEqualCombo } from '../services/Helpers.js';
-import { typeOf } from 'react-is';
+import Popup from './Popup.js';
 
 export default function GamePage(){
     const location = useLocation()
@@ -39,6 +42,10 @@ export default function GamePage(){
     const [gameEnded, setGameEnded] = useState(false)
     // Indicate the previous winner
     const [prevWinner, setPrevWinner] = useState(false)
+    // Indicate if the user info popup menu should appear
+    const [infoTrigger, setInfoTrigger] = useState(true)
+    // Indicate the page of the user info popup
+    const [userInfoPage, setUserInfoPage] = useState(1)
 
     // Text displayed when submition of cards is not successful
     const [submitError, setSubmitError] = useState('')
@@ -313,11 +320,20 @@ export default function GamePage(){
                         <p className={styles.tooltip}>Exit</p>
                     </button>
                     <p className={styles.p}>CODE: {lobbyCode}</p>
-                    <button className={styles.cornerButton}>
+                    <button onClick={() => setInfoTrigger(true)} className={styles.cornerButton}>
                         <IoIosInformationCircle className={styles.cornerIcon}/>
                         <p className={styles.tooltip}>Info</p>
                     </button>
                 </div>
+
+                <Popup onCloseButtonClicked={() => setInfoTrigger(!infoTrigger)} trigger={infoTrigger}>
+                    <div className={styles.userInfoContainer}>
+                        <h1 className={styles.userh1}>User Guide</h1>
+                        <img src={userInfoPage === 1 ? userInfo : userInfo2} className={styles.userInfoImg} alt='info'/>
+                        {userInfoPage === 1 && <button onClick={() => setUserInfoPage(2)} className={styles.pageButton}><BiRightArrowAlt className={styles.cornerIcon}/></button>}
+                        {userInfoPage === 2 && <button onClick={() => setUserInfoPage(1)} className={styles.pageButton}><BiLeftArrowAlt className={styles.cornerIcon}/></button>}
+                    </div>
+                </Popup>
 
                 {Object.values(playerObjDict).map((playerObj, index) => { 
                     // Make sure local player gets 1 as assigned number, and everyone else starts from 2
