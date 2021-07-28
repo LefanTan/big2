@@ -149,7 +149,7 @@ export default function LobbyPage(){
         //     name: 'player4',
         //     ready: true,
         //     host: false,
-        })
+        // })
 
 
         // Redirect to Game Page
