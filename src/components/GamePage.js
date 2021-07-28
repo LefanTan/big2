@@ -87,7 +87,9 @@ export default function GamePage(){
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
         query.once('value', snap => {
             setLobbyExist(snap.exists())
+            setTimeout(() =>{
             setLoading(false)
+            }, 200)
         })
     }, [lobbyCode])
 
@@ -235,10 +237,12 @@ export default function GamePage(){
                     })
 
                     if(Object.keys(playerObjDict[localPlayerKey]['cards']).length - cards.length === 0){
-                        roomReadRef.child(`${lobbyCode}`).update({
-                            gameEnded: true,
-                            prevWinner: localPlayerName
-                        })
+                        setTimeout(() => {
+                            roomReadRef.child(`${lobbyCode}`).update({
+                                gameEnded: true,
+                                prevWinner: localPlayerName
+                            })
+                        }, 3000)
                     }
 
                     // Update player Turn
@@ -265,11 +269,8 @@ export default function GamePage(){
             const deckQuery = roomReadRef.child(`${lobbyCode}/deck`)
             deckQuery.once('value', snap => {
                 if(snap.val()['placedBy'] === keys[nextNumber]){
-                    deckQuery.update({
-                        deckType: '',
-                        largestCardInDeck: '',
-                        emoji: '',
-                        placedBy: ''
+                    deckQuery.set({
+                        skippedBy: localPlayerName
                     })
                 }
             })
@@ -290,6 +291,7 @@ export default function GamePage(){
         playerListQuery.once('value', snap => {
             if(!snap.exists()) roomReadRef.child(lobbyCode).remove()
         })
+
         history.push(process.env.REACT_APP_LOBBYPAGE_URL)
     }
 
@@ -305,7 +307,7 @@ export default function GamePage(){
             <div className={styles.Container}>
                 {!startGame &&
                     <div className={styles.playerReadyContainer}>
-                        {prevWinner !== '' && <p className={styles.submitInfoText}>CONGRATUALTIONS, WINNER IS {prevWinner}!!!ヽ(•‿•)ノ</p>}
+                        {prevWinner !== '' && <p className={styles.submitInfoText}>CONGRATULATIONS, WINNER IS {prevWinner}!!!ヽ(•‿•)ノ</p>}
                         <div className={styles.rowContainer}>
                             {Object.values(playerObjDict).map(player =>  <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button'/> )}
                         </div>

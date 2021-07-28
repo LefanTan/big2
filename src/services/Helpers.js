@@ -73,7 +73,6 @@ export function getCardType(cards){
 
         return ['triple',  firstSuitIndex > secondSuitIndex ? (thirdSuitIndex > firstSuitIndex ? cards[2] : cards[0]) : cards[1], '╭( ๐_๐)╮']
     }else if(cards.length === 5){ // 5 cards combo
-
         // Check for straights and straight flushes
         let firstSuit = sortedCards[0].slice(2)
 

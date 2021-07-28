@@ -160,7 +160,7 @@ export default function Player(props){
                                 top = (85.5 / (playerCards.length - 1)) * index    
                         }   
 
-                        if(playerCards.length < 13 && index > 13)
+                        if(playerCards.length < 7)
                             top = ((height * 7) - (playerCards.length * height)) / 2 + index * height
                     }else if(props.playerNo === 4){
                         height = 14.25
@@ -179,7 +179,7 @@ export default function Player(props){
                                 top = (85.5 / (playerCards.length - 1)) * index
                         }   
 
-                        if(playerCards.length < 13 && index >= 13)
+                        if(playerCards.length < 7)
                             top = ((height * 7) - (playerCards.length * height)) / 2 + index * height
                     }
                     return <Card key={index} clickable={props.playerNo === 1} clicked={selectedCards.includes(cardType)} 

@@ -123,7 +123,8 @@ export default function LobbyPage(){
             deckType: '',
             largestCardInDeck: '',
             emoji: '',
-            placedBy: ''
+            placedBy: '',
+            skippedBy: ''
         })
 
         // Add local player
@@ -144,6 +145,7 @@ export default function LobbyPage(){
         //     ready: true,
         //     host: false,
         // })
+
 
         // Redirect to Game Page
         history.push({
