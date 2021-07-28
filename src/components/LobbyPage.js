@@ -57,6 +57,11 @@ export default function LobbyPage(){
                     return
                 }
 
+                if(Object.keys(playerList).find(key => playerList[key].name === playerName)){
+                    setErrorMsg("Name already taken, pick another one!")
+                    return
+                }
+
                 const playerReadRef = roomReadRef.child(`${lobbyCode}`).child('players')
                 playerReadRef.push({
                     name: playerName,

@@ -325,16 +325,6 @@ export default function GamePage(){
                         <p className={styles.tooltip}>Info</p>
                     </button>
                 </div>
-
-                <Popup onCloseButtonClicked={() => setInfoTrigger(!infoTrigger)} trigger={infoTrigger}>
-                    <div className={styles.userInfoContainer}>
-                        <h1 className={styles.userh1}>User Guide</h1>
-                        <img src={userInfoPage === 1 ? userInfo : userInfo2} className={styles.userInfoImg} alt='info'/>
-                        {userInfoPage === 1 && <button onClick={() => setUserInfoPage(2)} className={styles.pageButton}><BiRightArrowAlt className={styles.cornerIcon}/></button>}
-                        {userInfoPage === 2 && <button onClick={() => setUserInfoPage(1)} className={styles.pageButton}><BiLeftArrowAlt className={styles.cornerIcon}/></button>}
-                    </div>
-                </Popup>
-
                 {Object.values(playerObjDict).map((playerObj, index) => { 
                     // Make sure local player gets 1 as assigned number, and everyone else starts from 2
                     const assignedNumber = playerObj['name'] === localPlayerName ? 1 : currentPlayerNo++
@@ -348,6 +338,15 @@ export default function GamePage(){
                 <div className={styles.submitInfoContainer}>
                     <h1 className={styles.submitInfoText}>{submitError}</h1>
                 </div>}
+
+                <Popup onCloseButtonClicked={() => setInfoTrigger(!infoTrigger)} trigger={infoTrigger}>
+                    <div className={styles.userInfoContainer}>
+                        <h1 className={styles.userh1}>User Guide</h1>
+                        <img src={userInfoPage === 1 ? userInfo : userInfo2} className={styles.userInfoImg} alt='info'/>
+                        {userInfoPage === 1 && <button onClick={() => setUserInfoPage(2)} className={styles.pageButton}><BiRightArrowAlt className={styles.cornerIcon}/></button>}
+                        {userInfoPage === 2 && <button onClick={() => setUserInfoPage(1)} className={styles.pageButton}><BiLeftArrowAlt className={styles.cornerIcon}/></button>}
+                    </div>
+                </Popup>
             </div> 
             : <ErrorPage>404 Lobby not found</ErrorPage>
         )
