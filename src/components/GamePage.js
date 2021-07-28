@@ -161,7 +161,7 @@ export default function GamePage(){
             }
         }
 
-    }, [playerObjDict])
+    }, [playerObjDict, gameEnded])
 
 
     const alertUser = e => {
