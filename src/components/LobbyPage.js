@@ -134,7 +134,7 @@ export default function LobbyPage(){
             host: true
         })
 
-        // // MOCK PLAYERS
+        // MOCK PLAYERS
         // roomWriteRef.child('players').push({
         //     name: 'player2',
         //     ready: true,
@@ -145,6 +145,11 @@ export default function LobbyPage(){
         //     ready: true,
         //     host: false,
         // })
+        // roomWriteRef.child('players').push({
+        //     name: 'player4',
+        //     ready: true,
+        //     host: false,
+        })
 
 
         // Redirect to Game Page

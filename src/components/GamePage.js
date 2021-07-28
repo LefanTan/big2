@@ -118,7 +118,6 @@ export default function GamePage(){
             // Loop through the cards and deal them to player with a slight delay
             for(let i = 0; i < initialDeck.length; i++){
                 const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[playerIndex++ % playerKeys.length]}/cards`)
-                // const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[0]}/cards`)
                 playerDeckQuery.push({cardType: initialDeck[i]})
 
                 if(initialDeck[i] === '03D') roomReadRef.child(lobbyCode).update({playerTurn: playerObjDict[playerKeys[(playerIndex - 1) % playerKeys.length]]['name']})
