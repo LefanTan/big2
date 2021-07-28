@@ -114,9 +114,9 @@ export default function Deck (props){
             {props.playerTurnNumber && <ArrowDiv>{arrowIcon}</ArrowDiv>}
             <div className={styles.DeckContainer}>
                 {cardList.length > 0 && cardList.map((cardType, index) => <Card key={cardType} width='15' left={(100 - cardList.length * 15) / 2 + index * 15} cardType={cardType}/>)}
-                {deck['deckType'] && <h3 className={styles.h3}>{deck['deckType'].toUpperCase()} {deck['emoji']}</h3>}
-                {deck['placedBy'] && <p className={styles.p}>Placed By: {deck['placedBy']}</p>}
-                {deck['skippedBy'] && <p className={styles.p}>Skipped By: {deck['skippedBy']}</p>}
+                {(deck && deck['deckType'] !== '') && <h3 className={styles.h3}>{deck['deckType'].toUpperCase()} {deck['emoji']}</h3>}
+                {(deck && deck['placedBy'] !== '') && <p className={styles.p}>Placed By: {deck['placedBy']}</p>}
+                {(deck && deck['skippedBy'] !== '') && <p className={styles.p}>Skipped By: {deck['skippedBy']}</p>}
             </div>
         </div>
     )

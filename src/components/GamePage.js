@@ -211,7 +211,8 @@ export default function GamePage(){
                                     deckType: info[0],
                                     largestCardInDeck: info[1],
                                     emoji: info[2],
-                                    placedBy: localPlayerName
+                                    placedBy: localPlayerName,
+                                    skippedBy: ''
                                 })
                             else{ // same combo, smaller value
                                 setSubmitError('Invalid Cards')
@@ -223,7 +224,8 @@ export default function GamePage(){
                                 deckType: info[0],
                                 largestCardInDeck: info[1],
                                 emoji: info[2],
-                                placedBy: localPlayerName
+                                placedBy: localPlayerName,
+                                skippedBy: ''
                             })
                     }else{ // Cards submitted is imcompatible with deck
                         setSubmitError('Invalid Cards')
@@ -269,7 +271,11 @@ export default function GamePage(){
             const deckQuery = roomReadRef.child(`${lobbyCode}/deck`)
             deckQuery.once('value', snap => {
                 if(snap.val()['placedBy'] === keys[nextNumber]){
-                    deckQuery.set({
+                    deckQuery.update({
+                        deckType: '',
+                        largestCardInDeck: '',
+                        emoji: '',
+                        placedBy: '',
                         skippedBy: localPlayerName
                     })
                 }
