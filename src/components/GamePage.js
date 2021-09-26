@@ -2,7 +2,7 @@
 import Deck from './Deck.js';
 import Player from './Player.js'
 import styles from './GamePage.module.css'
-import {db} from '../services/Firebase'
+import { db } from '../services/Firebase'
 import { useLocation, useHistory } from 'react-router';
 import { useEffect, useState } from 'react'
 import { IoExitOutline } from 'react-icons/io5'
@@ -17,7 +17,7 @@ import circleFilled from '../assets/circle-filled.png';
 import { shuffleArray, getCardType, sortCard, biggerOrEqualCombo } from '../services/Helpers.js';
 import Popup from './Popup.js';
 
-export default function GamePage(){
+export default function GamePage() {
     const location = useLocation()
     const history = useHistory()
 
@@ -53,7 +53,7 @@ export default function GamePage(){
     const [playerTurn, setPlayerTurn] = useState('')
     // A dictionary that contains information of all player
     const [playerObjDict, setPlayerObjDict] = useState([])
-    
+
     var localPlayerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
     var isHost = Object.values(playerObjDict).find(x => x['host'] === true && x['name'] === localPlayerName)
     var playerNameNumberDict = {}
@@ -63,17 +63,17 @@ export default function GamePage(){
 
     // update player obj dict and playerTurn variable of the database
     useEffect(() => {
-        if(lobbyExist){
+        if (lobbyExist) {
             playerListQuery.on('value', snap => {
-                if(snap.exists()) setPlayerObjDict(snap.val())
-            })  
-            
+                if (snap.exists()) setPlayerObjDict(snap.val())
+            })
+
             playerTurnQuery.on('value', snap => {
-                if(snap.exists()) setPlayerTurn(snap.val())
+                if (snap.exists()) setPlayerTurn(snap.val())
             })
 
             roomReadRef.child(`${lobbyCode}`).on('value', snap => {
-                if(snap.exists()){
+                if (snap.exists()) {
                     setStartGame(snap.val()['started'])
                     setGameEnded(snap.val()['gameEnded'])
                     setPrevWinner(snap.val()['prevWinner'])
@@ -87,8 +87,8 @@ export default function GamePage(){
         const query = roomReadRef.orderByKey().equalTo(lobbyCode)
         query.once('value', snap => {
             setLobbyExist(snap.exists())
-            setTimeout(() =>{
-            setLoading(false)
+            setTimeout(() => {
+                setLoading(false)
             }, 200)
         })
     }, [lobbyCode])
@@ -101,26 +101,26 @@ export default function GamePage(){
             window.removeEventListener('beforeunload', alertUser)
             window.removeEventListener('unload', exitClickedHandler)
         }
-    }) 
+    })
 
     // Card dealing
     useEffect(() => {
         // Deal cards only if everyone is ready, and the person is a host
-        if(startGame && isHost){
+        if (startGame && isHost) {
             shuffleArray(initialDeck)
             let playerIndex = 0
             let playerKeys = Object.keys(playerObjDict)
 
             // Remove all cards from players if they exist
-            for(let i = 0; i < playerKeys.length; i++){
+            for (let i = 0; i < playerKeys.length; i++) {
                 roomReadRef.child(`${lobbyCode}/players/${playerKeys[i]}/cards`).remove()
             }
             // Loop through the cards and deal them to player with a slight delay
-            for(let i = 0; i < initialDeck.length; i++){
+            for (let i = 0; i < initialDeck.length; i++) {
                 const playerDeckQuery = roomReadRef.child(`${lobbyCode}/players/${playerKeys[playerIndex++ % playerKeys.length]}/cards`)
-                playerDeckQuery.push({cardType: initialDeck[i]})
+                playerDeckQuery.push({ cardType: initialDeck[i] })
 
-                if(initialDeck[i] === '03D') roomReadRef.child(lobbyCode).update({playerTurn: playerObjDict[playerKeys[(playerIndex - 1) % playerKeys.length]]['name']})
+                if (initialDeck[i] === '03D') roomReadRef.child(lobbyCode).update({ playerTurn: playerObjDict[playerKeys[(playerIndex - 1) % playerKeys.length]]['name'] })
             }
         }
     }, [startGame])
@@ -129,15 +129,15 @@ export default function GamePage(){
         localPlayerKey = Object.keys(playerObjDict).find(key => playerObjDict[key].name === localPlayerName)
 
         // Make sure the ready words and buttons doesn't dissapear too suddently
-        if(!startGame){
+        if (!startGame) {
             setTimeout(() => {
                 // Only allow game to start if all player click ready, if only 1 player, clicking ready won't start
-                if(Object.keys(playerObjDict).length > 1 && typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') {
-                    roomReadRef.child(`${lobbyCode}`).update({started: true})
+                if (Object.keys(playerObjDict).length > 1 && typeof (Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined') {
+                    roomReadRef.child(`${lobbyCode}`).update({ started: true })
                 }
             }, 1000);
-        }else{
-            if(gameEnded){
+        } else {
+            if (gameEnded) {
                 roomReadRef.child(`${lobbyCode}`).update({
                     started: false,
                     gameEnded: false
@@ -165,7 +165,7 @@ export default function GamePage(){
 
     const alertUser = e => {
         e.preventDefault()
-        e.returnValue = ''  
+        e.returnValue = ''
     }
 
     const playerReadyHandler = () => {
@@ -175,7 +175,7 @@ export default function GamePage(){
             playerQuery.set({
                 ...snap.val(),
                 ready: true
-            })  
+            })
         })
     }
 
@@ -184,27 +184,27 @@ export default function GamePage(){
     // PARAM: cards: array 
     //        type: string
     const onPlayerSubmitHandler = (cards) => {
-        if(cards.length === 0) 
+        if (cards.length === 0)
             return
 
-        if(playerTurn === localPlayerName){
+        if (playerTurn === localPlayerName) {
             var deckType = ''
             var largestCardInDeck = ''
 
             deckQuery.once('value', snap => {
-                if(snap.exists()){
+                if (snap.exists()) {
                     deckType = snap.val()['deckType']
                     largestCardInDeck = snap.val()['largestCardInDeck']
 
                     var info = getCardType(cards)
                     // Update deck
                     // Check if cards submitted is valid (bigger than the cards played in the deck, valid combo)
-                    if(info[1] === -1){
+                    if (info[1] === -1) {
                         setSubmitError('Invalid Cards')
                         return
-                    }else if(deckType === '' || biggerOrEqualCombo(info[0], deckType)){
-                        if(info[0] === deckType){ // If same combo, check for largest card in deck
-                            if(sortCard(info[1], largestCardInDeck) > 0)
+                    } else if (deckType === '' || biggerOrEqualCombo(info[0], deckType)) {
+                        if (info[0] === deckType) { // If same combo, check for largest card in deck
+                            if (sortCard(info[1], largestCardInDeck) > 0)
                                 deckQuery.set({
                                     cards: cards,
                                     deckType: info[0],
@@ -213,11 +213,11 @@ export default function GamePage(){
                                     placedBy: localPlayerName,
                                     skippedBy: ''
                                 })
-                            else{ // same combo, smaller value
+                            else { // same combo, smaller value
                                 setSubmitError('Invalid Cards')
                                 return
-                            } 
-                        }else // cards is bigger than deck's cards
+                            }
+                        } else // cards is bigger than deck's cards
                             deckQuery.set({
                                 cards: cards,
                                 deckType: info[0],
@@ -226,7 +226,7 @@ export default function GamePage(){
                                 placedBy: localPlayerName,
                                 skippedBy: ''
                             })
-                    }else{ // Cards submitted is imcompatible with deck
+                    } else { // Cards submitted is imcompatible with deck
                         setSubmitError('Invalid Cards')
                         return
                     }
@@ -237,7 +237,7 @@ export default function GamePage(){
                         playerListQuery.child(`${localPlayerKey}/cards/${cardKey}`).remove()
                     })
 
-                    if(Object.keys(playerObjDict[localPlayerKey]['cards']).length - cards.length === 0){
+                    if (Object.keys(playerObjDict[localPlayerKey]['cards']).length - cards.length === 0) {
                         setTimeout(() => {
                             roomReadRef.child(`${lobbyCode}`).update({
                                 gameEnded: true,
@@ -249,27 +249,27 @@ export default function GamePage(){
                     // Update player Turn
                     const keys = Object.keys(playerNameNumberDict)
                     const nextNumber = (keys.indexOf(playerTurn) + 1) % keys.length
-                    roomReadRef.child(lobbyCode).update({playerTurn: keys[nextNumber]})
+                    roomReadRef.child(lobbyCode).update({ playerTurn: keys[nextNumber] })
 
                     setSubmitError('')
                 }
             })
-        }else{
+        } else {
             setSubmitError("It's not your turn yet, I beg you to patiently wait 😩")
         }
     }
 
     const onPlayerSkipHandler = () => {
-        if(playerTurn === localPlayerName){
+        if (playerTurn === localPlayerName) {
             // Update player Turn
             const keys = Object.keys(playerNameNumberDict)
             const nextNumber = (keys.indexOf(playerTurn) + 1) % keys.length
-            roomReadRef.child(lobbyCode).update({playerTurn: keys[nextNumber]})
+            roomReadRef.child(lobbyCode).update({ playerTurn: keys[nextNumber] })
 
             // If the next player is the person that last placed the card, refresh the deck info
             const deckQuery = roomReadRef.child(`${lobbyCode}/deck`)
             deckQuery.once('value', snap => {
-                if(snap.val()['placedBy'] === keys[nextNumber]){
+                if (snap.val()['placedBy'] === keys[nextNumber]) {
                     deckQuery.update({
                         deckType: '',
                         largestCardInDeck: '',
@@ -286,7 +286,7 @@ export default function GamePage(){
     // If last person to exit, delete the lobby
     const exitClickedHandler = () => {
         Object.entries(playerObjDict).forEach(([k, v]) => {
-            if(v.name === localPlayerName){
+            if (v.name === localPlayerName) {
                 // Remove the player from the players list
                 roomReadRef.child(`${lobbyCode}/players/${k}`).remove()
             }
@@ -294,68 +294,68 @@ export default function GamePage(){
 
         const playerListQuery = roomReadRef.child(`${lobbyCode}/players`)
         playerListQuery.once('value', snap => {
-            if(!snap.exists()) roomReadRef.child(lobbyCode).remove()
+            if (!snap.exists()) roomReadRef.child(lobbyCode).remove()
         })
 
         history.push(process.env.REACT_APP_LOBBYPAGE_URL)
     }
 
-    if(loading){
+    if (loading) {
         return (
             <div className={styles.loadingContainer}>
                 <h1 className={styles.h1}>Loading...</h1>
             </div>
         )
-    }else{
-        return( 
+    } else {
+        return (
             lobbyExist ?
-            <div className={styles.Container}>
-                {!startGame &&
-                    <div className={styles.playerReadyContainer}>
-                        {prevWinner !== '' && <p className={styles.submitInfoText}>CONGRATULATIONS, WINNER IS {prevWinner}!!!ヽ(•‿•)ノ</p>}
-                        <div className={styles.rowContainer}>
-                            {Object.values(playerObjDict).map(player =>  <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button'/> )}
+                <div className={styles.Container}>
+                    {!startGame &&
+                        <div className={styles.playerReadyContainer}>
+                            {prevWinner !== '' && <p className={styles.submitInfoText}>CONGRATULATIONS, WINNER IS {prevWinner}!!!ヽ(•‿•)ノ</p>}
+                            <div className={styles.rowContainer}>
+                                {Object.values(playerObjDict).map(player => <img key={player.name} src={player.ready ? circleFilled : circle} className={styles.readyCircle} alt='ready button' />)}
+                            </div>
+                            <button className={styles.playButton} onClick={playerReadyHandler}>{`${prevWinner === '' ? 'Ready?' : 'Go again?'}`}</button>
+                            <p className={styles.words}>{typeof (Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined' && Object.keys(playerObjDict).length === 1
+                                ? 'Hmmmm, the game needs more than 1 player to start ¯\\_( ͡❛ ͜ʖ ͡❛)_/¯' : "only click if you're actually ready, of course ☉_☉"}</p>
                         </div>
-                        <button className={styles.playButton} onClick={playerReadyHandler}>{`${prevWinner === '' ? 'Ready?' : 'Go again?'}`}</button> 
-                        <p className={styles.words}>{typeof(Object.values(playerObjDict).find(obj => obj.ready === false)) === 'undefined' && Object.keys(playerObjDict).length === 1 
-                        ? 'Hmmmm, the game needs more than 1 player to start ¯\\_( ͡❛ ͜ʖ ͡❛)_/¯' : "only click if you're actually ready, of course ☉_☉" }</p>
+                    }
+                    <div className={styles.userCorner}>
+                        <button className={styles.cornerButton} onClick={() => exitClickedHandler()}>
+                            <IoExitOutline className={styles.cornerIcon} />
+                            <p className={styles.tooltip}>Exit</p>
+                        </button>
+                        <p className={styles.p}>CODE: {lobbyCode}</p>
+                        <button onClick={() => setInfoTrigger(true)} className={styles.cornerButton}>
+                            <IoIosInformationCircle className={styles.cornerIcon} />
+                            <p className={styles.tooltip}>Info</p>
+                        </button>
                     </div>
-                }
-                <div className={styles.userCorner}>
-                    <button className={styles.cornerButton} onClick={() => exitClickedHandler()}>
-                        <IoExitOutline className={styles.cornerIcon}/>
-                        <p className={styles.tooltip}>Exit</p>
-                    </button>
-                    <p className={styles.p}>CODE: {lobbyCode}</p>
-                    <button onClick={() => setInfoTrigger(true)} className={styles.cornerButton}>
-                        <IoIosInformationCircle className={styles.cornerIcon}/>
-                        <p className={styles.tooltip}>Info</p>
-                    </button>
-                </div>
-                {Object.values(playerObjDict).map((playerObj, index) => { 
-                    // Make sure local player gets 1 as assigned number, and everyone else starts from 2
-                    const assignedNumber = playerObj['name'] === localPlayerName ? 1 : currentPlayerNo++
-                    playerNameNumberDict[playerObj['name']] = assignedNumber
-                    
-                    return(<Player turn={playerObj['name'] === playerTurn} key={assignedNumber} onSubmit={onPlayerSubmitHandler} onSkip={onPlayerSkipHandler}
-                    playerData={playerObj} playerIndex={index} lobbyCode={lobbyCode} playerNo={assignedNumber}>{playerObj['name']}</Player>)
-                })}
-                {startGame && <Deck playerTurnNumber={playerNameNumberDict[playerTurn]} lobbyCode={lobbyCode}/>}
-                {submitError !== '' && 
-                <div className={styles.submitInfoContainer}>
-                    <h1 className={styles.submitInfoText}>{submitError}</h1>
-                </div>}
+                    {Object.values(playerObjDict).map((playerObj, index) => {
+                        // Make sure local player gets 1 as assigned number, and everyone else starts from 2
+                        const assignedNumber = playerObj['name'] === localPlayerName ? 1 : currentPlayerNo++
+                        playerNameNumberDict[playerObj['name']] = assignedNumber
 
-                <Popup onCloseButtonClicked={() => setInfoTrigger(!infoTrigger)} trigger={infoTrigger}>
-                    <div className={styles.userInfoContainer}>
-                        <h1 className={styles.userh1}>User Guide</h1>
-                        <img src={userInfoPage === 1 ? userInfo : userInfo2} className={styles.userInfoImg} alt='info'/>
-                        {userInfoPage === 1 && <button onClick={() => setUserInfoPage(2)} className={styles.pageButton}><BiRightArrowAlt className={styles.cornerIcon}/></button>}
-                        {userInfoPage === 2 && <button onClick={() => setUserInfoPage(1)} className={styles.pageButton}><BiLeftArrowAlt className={styles.cornerIcon}/></button>}
-                    </div>
-                </Popup>
-            </div> 
-            : <ErrorPage>404 Lobby not found</ErrorPage>
+                        return (<Player turn={playerObj['name'] === playerTurn} key={assignedNumber} onSubmit={onPlayerSubmitHandler} onSkip={onPlayerSkipHandler}
+                            playerData={playerObj} playerIndex={index} lobbyCode={lobbyCode} playerNo={assignedNumber}>{playerObj['name']}</Player>)
+                    })}
+                    {startGame && <Deck playerTurnNumber={playerNameNumberDict[playerTurn]} lobbyCode={lobbyCode} />}
+                    {submitError !== '' &&
+                        <div className={styles.submitInfoContainer}>
+                            <h1 className={styles.submitInfoText}>{submitError}</h1>
+                        </div>}
+
+                    <Popup onCloseButtonClicked={() => setInfoTrigger(!infoTrigger)} trigger={infoTrigger}>
+                        <div className={styles.userInfoContainer}>
+                            <h1 className={styles.userh1}>User Guide</h1>
+                            <img src={userInfoPage === 1 ? userInfo : userInfo2} className={styles.userInfoImg} alt='info' />
+                            {userInfoPage === 1 && <button onClick={() => setUserInfoPage(2)} className={styles.pageButton}><BiRightArrowAlt className={styles.cornerIcon} /></button>}
+                            {userInfoPage === 2 && <button onClick={() => setUserInfoPage(1)} className={styles.pageButton}><BiLeftArrowAlt className={styles.cornerIcon} /></button>}
+                        </div>
+                    </Popup>
+                </div>
+                : <ErrorPage>404 Lobby not found</ErrorPage>
         )
     }
 }
