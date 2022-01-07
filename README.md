@@ -11,4 +11,4 @@ Making this game was passionate project of mine, however it was rushed and there
 3. Remember to implement better accessibility
 4. Responsiveness should be better, it is why the app doesnt work on mobile
 5. Components could perhaps be split into smaller chunks
-6. CSS practices are as good as I want it to be
+6. CSS practices are not as good as I want it to be
